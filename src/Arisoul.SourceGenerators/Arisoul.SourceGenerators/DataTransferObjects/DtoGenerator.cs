@@ -1,6 +1,6 @@
 ﻿namespace Arisoul.SourceGenerators.DataTransferObjects;
 
-[Generator(LanguageNames.CSharp)]
+
 public partial class DtoGenerator : ISourceGenerator
 {
     public void Execute(GeneratorExecutionContext context)

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<!-- Reference the source generator project -->
+	<ItemGroup>
+		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators\Arisoul.SourceGenerators.csproj"
+						  OutputItemType="Analyzer"
+						  ReferenceOutputAssembly="false"/>
+		<!-- Don't reference the generator dll -->
+
+		<!-- Reference the attributes project "treat as an analyzer"-->
+		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj"
+			OutputItemType="Analyzer"
+			ReferenceOutputAssembly="true" />
+		<!-- We DO reference the attributes dll -->
+	</ItemGroup>
+
+</Project>
