@@ -4,11 +4,26 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
 		<IncludeBuildOutput>false</IncludeBuildOutput>
-		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<ImplicitUsings>true</ImplicitUsings>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<!-- Persist the source generator (and other) files to disk -->
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<!-- 👇 The "base" path for the source generators -->
+		<GeneratedFolder>Generated</GeneratedFolder>
+		<!-- 👇 Write the output for each target framework to a different sub-folder -->
+		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- 👇 Exclude everything in the base folder -->
+		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
+	</ItemGroup>
+
+	<!-- Standard source generator references -->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />

@@ -31,8 +31,29 @@ namespace GeneratorDebugConsumer
 }";
 
         return TestHelper.Verify<IncrementalDtoGenerator>(code);
+    }
 
-        //var result = GeneratorDebugger.RunDebugging(new[] { code }, new IncrementalDtoGenerator[] { generator });
-        //Debug.WriteLine(result.GeneratedTrees.Count());
+    [Fact]
+    public Task PersonDtoGeneratorWithDtoName()
+    {
+        // TODO: this test is not correct
+        var code = @"
+using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace GeneratorDebugConsumer
+{
+    public class Person
+    {
+        public Guid Id { get; set; }
+        
+        [DtoProperty(Name = ""TheName"")]
+        public string Name { get; set; }
+    
+        [DtoProperty]
+        public string Description { get; set; }
+    }
+}";
+
+        return TestHelper.Verify<IncrementalDtoGenerator>(code);
     }
 }

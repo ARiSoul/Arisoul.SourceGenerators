@@ -7,18 +7,10 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<!-- Reference the source generator project -->
 	<ItemGroup>
-		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators\Arisoul.SourceGenerators.csproj"
-						  OutputItemType="Analyzer"
-						  ReferenceOutputAssembly="false"/>
-		<!-- Don't reference the generator dll -->
-
-		<!-- Reference the attributes project "treat as an analyzer"-->
-		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj"
-			OutputItemType="Analyzer"
-			ReferenceOutputAssembly="true" />
-		<!-- We DO reference the attributes dll -->
+	  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.0-beta" PrivateAssets="all" ExcludeAssets="runtime"/>
 	</ItemGroup>
+
+	<!-- Reference the source generator project -->
 
 </Project>
