@@ -1,5 +1,4 @@
-﻿using Arisoul.SourceGenerators.DataTransferObjects;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Arisoul.SourceGenerators.Tests;
@@ -12,16 +11,18 @@ public static class TestHelper
         // Parse the provided string into a C# syntax tree
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
-        IEnumerable<PortableExecutableReference> references = new[]
-        {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
-        };
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+                                .Where(assembly => !assembly.IsDynamic)
+                                .Select(assembly => MetadataReference
+                                                    .CreateFromFile(assembly.Location))
+                                .Cast<MetadataReference>();
 
         // Create a Roslyn compilation for the syntax tree.
         CSharpCompilation compilation = CSharpCompilation.Create(
             assemblyName: "Tests",
             syntaxTrees: new[] { syntaxTree },
-            references: references);
+            references: references,
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         // Create an instance of our EnumGenerator incremental source generator
         var generator = new T();

@@ -26,7 +26,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj" />
 		<ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators\Arisoul.SourceGenerators.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Snapshots\" />
 	</ItemGroup>
 
 </Project>

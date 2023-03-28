@@ -1,9 +1,7 @@
 ﻿using Arisoul.SourceGenerators.DataTransferObjects;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Diagnostics;
-using System.Text;
-using Xunit.Sdk;
+using System;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Arisoul.SourceGenerators.Tests;
 
@@ -11,7 +9,7 @@ namespace Arisoul.SourceGenerators.Tests;
 public class DtoGeneratorTests
 {
     [Fact]
-    public Task PersonDtoGenerator()
+    public Task DtoPropertyWithNoNameShouldVerify()
     {
         var code = @"
 using Arisoul.SourceGenerators.DataTransferObjects;
@@ -30,13 +28,12 @@ namespace GeneratorDebugConsumer
     }
 }";
 
-        return TestHelper.Verify<IncrementalDtoGenerator>(code);
+        return TestHelper.Verify<NewDtoGenerator>(code);
     }
 
     [Fact]
-    public Task PersonDtoGeneratorWithDtoName()
+    public Task DtoPropertyWithNameShouldVerify()
     {
-        // TODO: this test is not correct
         var code = @"
 using Arisoul.SourceGenerators.DataTransferObjects;
 
@@ -46,7 +43,7 @@ namespace GeneratorDebugConsumer
     {
         public Guid Id { get; set; }
         
-        [DtoProperty(Name = ""TheName"")]
+        [DtoProperty(""TheName"")]
         public string Name { get; set; }
     
         [DtoProperty]
@@ -54,6 +51,27 @@ namespace GeneratorDebugConsumer
     }
 }";
 
-        return TestHelper.Verify<IncrementalDtoGenerator>(code);
+        return TestHelper.Verify<NewDtoGenerator>(code);
+    }
+
+    [Fact]
+    public Task DtoPropertyClassWithFileScopedNamespaceShouldVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; }
+}";
+
+        return TestHelper.Verify<NewDtoGenerator>(code);
     }
 }

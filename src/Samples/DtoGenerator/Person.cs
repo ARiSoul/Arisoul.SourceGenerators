@@ -6,9 +6,9 @@ public class Person
 {
     public int Id { get; set; }
 
-    [DtoProperty(Name = "Test")]
+    [DtoProperty("Name")]
     public string FirstName { get; set; }
 
     [DtoProperty]
-    public string LastName { get; set; }
+    public string LastName { get; }
 }

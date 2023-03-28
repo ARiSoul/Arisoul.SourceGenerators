@@ -7,21 +7,22 @@
 		<!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<ImplicitUsings>true</ImplicitUsings>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<!-- Persist the source generator (and other) files to disk -->
+	<!--<PropertyGroup>
+		--><!-- Persist the source generator (and other) files to disk --><!--
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<!-- 👇 The "base" path for the source generators -->
+		--><!-- 👇 The "base" path for the source generators --><!--
 		<GeneratedFolder>Generated</GeneratedFolder>
-		<!-- 👇 Write the output for each target framework to a different sub-folder -->
+		--><!-- 👇 Write the output for each target framework to a different sub-folder --><!--
 		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- 👇 Exclude everything in the base folder -->
+		--><!-- 👇 Exclude everything in the base folder --><!--
 		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<!-- Standard source generator references -->
 	<ItemGroup>
@@ -32,7 +33,7 @@
 	<!-- Reference the attributes from the generator to compile against them -->
 	<!-- Ensure we specify PrivateAssets so the NuGet doesn't have any dependencies -->
 	<ItemGroup>
-		<ProjectReference Include="..\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj" PrivateAssets="All"/>
+		<ProjectReference Include="..\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
