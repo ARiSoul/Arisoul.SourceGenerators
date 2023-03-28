@@ -28,7 +28,7 @@ namespace GeneratorDebugConsumer
     }
 }";
 
-        return TestHelper.Verify<NewDtoGenerator>(code);
+        return TestHelper.Verify<DtoGenerator>(code);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ namespace GeneratorDebugConsumer
     }
 }";
 
-        return TestHelper.Verify<NewDtoGenerator>(code);
+        return TestHelper.Verify<DtoGenerator>(code);
     }
 
     [Fact]
@@ -72,6 +72,6 @@ public class Person
     public string LastName { get; }
 }";
 
-        return TestHelper.Verify<NewDtoGenerator>(code);
+        return TestHelper.Verify<DtoGenerator>(code);
     }
 }

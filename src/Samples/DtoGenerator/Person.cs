@@ -10,5 +10,8 @@ public class Person
     public string FirstName { get; set; }
 
     [DtoProperty]
-    public string LastName { get; }
+    public string LastName { get; set; }
+
+    [DtoProperty]
+    public DateTime Date { get; set; }
 }
