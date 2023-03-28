@@ -3,16 +3,48 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Nullable>enable</Nullable>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-		<IsRoslynComponent>true</IsRoslynComponent>
 		<LangVersion>latest</LangVersion>
+		<!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<ImplicitUsings>true</ImplicitUsings>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+	</PropertyGroup>
+
+	<!--<PropertyGroup>
+		--><!-- Persist the source generator (and other) files to disk --><!--
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		--><!-- 👇 The "base" path for the source generators --><!--
+		<GeneratedFolder>Generated</GeneratedFolder>
+		--><!-- 👇 Write the output for each target framework to a different sub-folder --><!--
+		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
+		--><!-- 👇 Exclude everything in the base folder --><!--
+		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
+	</ItemGroup>-->
+
+	<!-- Standard source generator references -->
+	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+	</ItemGroup>
+
+	<!-- Reference the attributes from the generator to compile against them -->
+	<!-- Ensure we specify PrivateAssets so the NuGet doesn't have any dependencies -->
+	<ItemGroup>
+		<ProjectReference Include="..\Arisoul.SourceGenerators.Attributes\Arisoul.SourceGenerators.Attributes.csproj" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Pack the generator dll in the analyzers/dotnet/cs path -->
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+		<!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
+		<None Include="$(OutputPath)\Arisoul.SourceGenerators.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+		<!-- Pack the attributes dll in the lib\netstandard2.0 path -->
+		<None Include="$(OutputPath)\Arisoul.SourceGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
 	</ItemGroup>
 
 </Project>

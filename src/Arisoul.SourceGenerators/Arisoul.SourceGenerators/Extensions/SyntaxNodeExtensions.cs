@@ -1,17 +1,54 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-
-namespace Arisoul.SourceGenerators.Extensions;
+﻿namespace Arisoul.SourceGenerators.Extensions;
 
 internal static class SyntaxNodeExtensions
 {
-    internal static string GetNamespace(this SyntaxNode? node)
-       => node switch
-       {
-           NamespaceDeclarationSyntax namespaceNode => namespaceNode.Name.ToString(),
-           FileScopedNamespaceDeclarationSyntax fileScopedNamespaceNode => fileScopedNamespaceNode.Name.ToString(),
-           { } => GetNamespace(node.Parent),
-           _ => throw new InvalidOperationException("Could not find namespace")
-       };
+    /// <summary>
+    /// Determine the namespace the class/enum/struct is declared in, if any
+    /// </summary>
+    /// <param name="syntax">The syntax.</param>
+    /// <returns>The namespace if any, or an empty string meaning to use the default one.</returns>
+    /// <remarks>Source: <a href="https://andrewlock.net/creating-a-source-generator-part-5-finding-a-type-declarations-namespace-and-type-hierarchy"/></remarks>
+    public static string GetNamespace(this BaseTypeDeclarationSyntax syntax)
+    {
+        // If we don't have a namespace at all we'll return an empty string
+        // This accounts for the "default namespace" case
+        string nameSpace = string.Empty;
+
+        // Get the containing syntax node for the type declaration
+        // (could be a nested type, for example)
+        SyntaxNode? potentialNamespaceParent = syntax.Parent;
+
+        // Keep moving "out" of nested classes etc until we get to a namespace
+        // or until we run out of parents
+        while (potentialNamespaceParent != null &&
+                potentialNamespaceParent is not NamespaceDeclarationSyntax
+                && potentialNamespaceParent is not FileScopedNamespaceDeclarationSyntax)
+        {
+            potentialNamespaceParent = potentialNamespaceParent.Parent;
+        }
+
+        // Build up the final namespace by looping until we no longer have a namespace declaration
+        if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
+        {
+            // We have a namespace. Use that as the type
+            nameSpace = namespaceParent.Name.ToString();
+
+            // Keep moving "out" of the namespace declarations until we 
+            // run out of nested namespace declarations
+            while (true)
+            {
+                if (namespaceParent.Parent is not NamespaceDeclarationSyntax parent)
+                {
+                    break;
+                }
+
+                // Add the outer namespace as a prefix to the final namespace
+                nameSpace = $"{namespaceParent.Name}.{nameSpace}";
+                namespaceParent = parent;
+            }
+        }
+
+        // return the final namespace
+        return nameSpace;
+    }
 }
