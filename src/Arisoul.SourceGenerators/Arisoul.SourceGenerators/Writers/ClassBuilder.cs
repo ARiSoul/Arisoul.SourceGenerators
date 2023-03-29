@@ -1,8 +1,9 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Arisoul.SourceGenerators.Writers;
 
 // TODO: maybe in another time
+[ExcludeFromCodeCoverage]
 internal class ClassBuilder :
     IExpectUsing,
     IExpectNamespace,

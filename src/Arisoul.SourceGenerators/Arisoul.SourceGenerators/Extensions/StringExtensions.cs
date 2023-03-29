@@ -1,8 +1,8 @@
 ﻿namespace Arisoul.SourceGenerators.Extensions;
 
-internal static class StringExtensions
+public static class StringExtensions
 {
-    internal static string AppendTabs(this string str, int tabsCount)
+    public static string AppendTabs(this string str, int tabsCount)
     {
         if (tabsCount > 0)
             for (int i = 0; i < tabsCount; i++)
@@ -11,7 +11,7 @@ internal static class StringExtensions
         return str;
     }
 
-    internal static string? Capitalize(this string? str)
+    public static string? Capitalize(this string? str)
     {
         if (str == null)
             return null;

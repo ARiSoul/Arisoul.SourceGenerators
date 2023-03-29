@@ -1,0 +1,16 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: AS001,
+      Title: Read only property,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (8,4)-(9,36),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: The property 'FirstName' is readonly and cannot be used in the DTO class.,
+      Message: The property 'FirstName' is readonly and cannot be used in the DTO class.,
+      Category: DTO generator
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
+using System.Collections.Immutable;
 
 namespace Arisoul.SourceGenerators.DataTransferObjects;
 
@@ -9,8 +10,7 @@ public class DtoGenerator : IIncrementalGenerator
     internal const string DTO = "dto";
     internal const string POCO = "poco";
 
-    // TODO: diagnostics when a property is readonly
-    // TODO: more tests scenarios, including the diagnostics
+    // TODO: Add type converter option in the attribute?
     // TODO: package in the proper way
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -74,7 +74,7 @@ public class DtoGenerator : IIncrementalGenerator
 
         IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
 
-        List<DtoGeneratorClassInfo> classesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+        List<DtoGeneratorClassInfo> classesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context);
 
         string dtoCapitalized = DTO.Capitalize()!;
 
@@ -92,7 +92,7 @@ public class DtoGenerator : IIncrementalGenerator
         }
     }
 
-    private static List<DtoGeneratorClassInfo> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> distinctClasses, CancellationToken cancellationToken)
+    private static List<DtoGeneratorClassInfo> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> distinctClasses, SourceProductionContext context)
     {
         var classesToGenerate = new List<DtoGeneratorClassInfo>();
 
@@ -104,7 +104,7 @@ public class DtoGenerator : IIncrementalGenerator
         // loop through all classes
         foreach (var classDeclaration in distinctClasses)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            context.CancellationToken.ThrowIfCancellationRequested();
 
             var propsToGenerate = new List<DtoGeneratorPropertyInfo>();
 
@@ -126,6 +126,13 @@ public class DtoGenerator : IIncrementalGenerator
                     // is this the attribute?
                     if (attribute.AttributeClass == null || !FullyQualifiedMarkerName.Contains(attribute.AttributeClass.ToString()))
                         continue;
+
+                    // the property cannot be readonly
+                    if (propertySymbol.IsReadOnly)
+                    {
+                        context.ReportDiagnostic(DTODiagnostics.ReadonlyPropertyDiagnostic(propertySymbol, member));
+                        continue;
+                    }
 
                     // this is the attribute, go on
                     string? dtoPropertyName = propertySymbol.Name;
@@ -206,7 +213,7 @@ namespace {classInfo.Namespace}
 
         foreach (var prop in classInfo.Properties)
             sb.Append(@$"
-        public {prop.Type} {prop.DtoName} {{ get; set; }}");
+        {PropertyWriter.WritePublicPropertySimple(prop.Type, prop.DtoName)}");
 
         sb.Append(@"
     }
@@ -236,7 +243,7 @@ namespace {classInfo.Namespace}
         
         foreach (var prop in classInfo.Properties)
             sb.Append(@$"
-            {DTO}.{prop.DtoName} = {POCO}.{prop.PocoName};");
+            {PropertyWriter.WritePropertyAttribution($"{DTO}.{prop.DtoName}", $"{POCO}.{prop.PocoName}")}");
 
         sb.Append($@"
 

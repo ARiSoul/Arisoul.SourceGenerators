@@ -21,21 +21,5 @@ internal static class ClassWriter
         return sb.ToString();
     }
 
-    public static string WriteNamespace(string @namespace, bool fileScoped = false)
-    {
-        StringBuilder sb = new();
-
-        sb.Append(@$"
-namespace {@namespace}");
-
-        if (fileScoped)
-            sb.AppendLine(";");
-        else
-            sb.AppendLine(@"
-{");
-
-        return sb.ToString();
-    }
-
     public static string WriteUsing(string @using) => $"using {@using};";
 }
