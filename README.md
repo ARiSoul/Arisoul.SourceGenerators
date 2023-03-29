@@ -213,7 +213,7 @@ Project Link: [https://github.com/ARiSoul/Arisoul.SourceGenerators](https://gith
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### This template was copyied from <a href="https://github.com/othneildrew/Best-README-Template/tree/master">othneildrew/Best-README-Template</a>
+### This README template was copied from <a href="https://github.com/othneildrew/Best-README-Template/tree/master">othneildrew/Best-README-Template</a>
 - Go there and give him a star :)
 
 
