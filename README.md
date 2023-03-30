@@ -283,7 +283,7 @@ _If you need more examples, please, let me now. And remember, this has a lot to 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Release Notes
-- [v1.0.0 (29/03/2023)](./changelog.md#v1.0.0-(29/03/2023))
+- [v1.0.0 (29/03/2023)](./changelog#v1.0.0-(29/03/2023))
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
