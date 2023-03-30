@@ -8,6 +8,19 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<ImplicitUsings>true</ImplicitUsings>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<Title>Arisoul Source Generators</Title>
+		<Authors>Arisoul</Authors>
+		<Company>Arisoul</Company>
+		<Description>This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and extensions that facilitate mappings. 
+In this first version, only single entities are considered in mapping extensions. The generated DTO class will have the name of the source class followed by Dto, and the extensions class will have the suffix Extensions. Ex.: Class 'Person', will generate 'PersonDto' and 'PersonExtensions'.
+The marker attribute to trigger the generation is called 'DtoPropertyAttribute ' and it's provided in the package in the Arisoul.SourceGenerators.Attributes dll. Any suggestions or ideas are welcome in the GitHub repo.</Description>
+		<PackageProjectUrl></PackageProjectUrl>
+		<PackageIcon>Arisoul_Triangle_Fill_128x128.png</PackageIcon>
+		<RepositoryUrl>https://github.com/ARiSoul/Arisoul.SourceGenerators</RepositoryUrl>
+		<PackageTags>source;generators;c#;dotnet;dto;data transfer object;generation;code</PackageTags>
+		<PackageOutputPath>$(OutputPath)</PackageOutputPath>
+		<IncludeSymbols>False</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<!--<PropertyGroup>
@@ -45,6 +58,10 @@
 
 		<!-- Pack the attributes dll in the lib\netstandard2.0 path -->
 		<None Include="$(OutputPath)\Arisoul.SourceGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
+		<None Include="E:\Dropbox\Knowledge Base\IMAGENS &amp; ICONS\Arisoul_Triangle_Fill_128x128.png">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>

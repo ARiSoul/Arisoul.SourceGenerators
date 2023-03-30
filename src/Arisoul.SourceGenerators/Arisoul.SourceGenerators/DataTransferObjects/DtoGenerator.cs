@@ -3,16 +3,26 @@ using System.Collections.Immutable;
 
 namespace Arisoul.SourceGenerators.DataTransferObjects;
 
+/// <summary>
+/// Generates Data Transfer Objects (DTOs) from classes that have properties decorated with the <see cref="DtoPropertyAttribute"/>.
+/// </summary>
 [Generator]
 public class DtoGenerator : IIncrementalGenerator
 {
+    #region Constants
+
     internal const string FullyQualifiedMarkerName = "Arisoul.SourceGenerators.DataTransferObjects.DtoPropertyAttribute";
     internal const string DTO = "dto";
     internal const string POCO = "poco";
 
+    #endregion
+
     // TODO: Add type converter option in the attribute?
     // TODO: package in the proper way
 
+    #region Public Methods
+
+    /// <inheritdoc/>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // do a simple filter for classes
@@ -31,10 +41,14 @@ public class DtoGenerator : IIncrementalGenerator
             static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
-    static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
-        => syntaxNode is ClassDeclarationSyntax;
+    #endregion
 
-    static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    #region Private Methods
+
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
+      => syntaxNode is ClassDeclarationSyntax;
+
+    private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         // do foreach instead of LINQ due performance
 
@@ -68,7 +82,7 @@ public class DtoGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty) return;
 
@@ -240,7 +254,7 @@ namespace {classInfo.Namespace}
         {{
             {dtoClassName} {DTO} = new {dtoClassName}();
 ");
-        
+
         foreach (var prop in classInfo.Properties)
             sb.Append(@$"
             {PropertyWriter.WritePropertyAttribution($"{DTO}.{prop.DtoName}", $"{POCO}.{prop.PocoName}")}");
@@ -288,4 +302,6 @@ namespace {classInfo.Namespace}
 
         return SourceText.From(sb.ToString(), Encoding.UTF8);
     }
+
+    #endregion
 }

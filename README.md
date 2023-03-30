@@ -28,23 +28,15 @@
 <br />
 <div align="center">
   <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="img/Arisoul_Triangle_Fill_128x128.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Arisoul Source Generators (under construction)</h3>
 
   <p align="center">
     This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and extensions that facilitate mappings.
-    
-In this first version, only single entities are considered in mapping extensions. The generated DTO class will have the name of the source class followed by Dto, and the extensions class will have the suffix Extensions. Ex.: Class 'Person', will generate 'PersonDto' and 'PersonExtensions'.
-
-The marker attribute to trigger the generation is called 'DtoPropertyAttribute ' and it's provided in the package in the Arisoul.SourceGenerators.Attributes dll. Any suggestions or ideas are welcome, such as issues.
-    <br />
-    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators">View Demo</a>
-    ·
     <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues">Report Bug</a>
     ·
     <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues">Request Feature</a>
@@ -84,24 +76,24 @@ The marker attribute to trigger the generation is called 'DtoPropertyAttribute '
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+I found myself many times creating POCO classes, or Entity Models, and the rewriting by hand new classes for the corresponding DTOs. I think that this a very boring task, so I decided to give the new .Net Source Generators a try, and do some of that job for me. I then understood that using AutoMapper it's all good and all, but why don't to try to genereate some extensions helpers for simple scenarios?
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+In this first version, only single entities are considered in mapping extensions. The generated DTO class will have the name of the source class followed by Dto, and the extensions class will have the suffix Extensions. Ex.: Class 'Person', will generate 'PersonDto' and 'PersonExtensions'.
+
+The marker attribute to trigger the generation is called 'DtoPropertyAttribute' and it's provided in the package through the Arisoul.SourceGenerators.Attributes dll that comes together. 
+
+I intend to grow the package as needed to allow other generations, and make it better.
+
+Of course, this is a very very simple tool, so don't be to hard on me :). Any suggestions or ideas are welcome, such as issues.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ### Built With
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![csharp][c#]][csharp-url]
+* [![React][netstandard20]][netstandard-url]
+* [![.Net 7][.Net 7]][net7-url]
+* [![xunit][xunit]][xunit-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -110,32 +102,28 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- The generator is made with netstandard2.0, so it should be compatible with all .Net Frameworks since 4.6 :wink:
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+Choose how to install the package:
+
+* .NET CLI
+  ```sh
+  dotnet add package Arisoul.SourceGenerators --version 1.0.0
+  ```
+
+* Package Manager
+  ```sh
+  NuGet\Install-Package Arisoul.SourceGenerators -Version 1.0.0
+  ```
+
+* Directly in your .csproj
+  ```sh
+  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.0" />
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -144,9 +132,142 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+1. Create a POCO class with the properties you want
+2. Add ``` using Arisoul.SourceGenerators.DataTransferObjects; ```
+3. Decorate the properties that you want to be included in the Dto class with the attribute ``` [DtoProperty] ```
+4. That's it 👍 :smiley:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+- Now, you can use a class named **YourClassDto** with the corresponding properties
+- The other generated class creates extensions for the DTO and the POCO class, allowing to call ```dtoInstance = pocoInstance.ToDto()```, or ```pocoInstance.FromDto(dtoInstance)```, and the same reverse corresponding methods.
+- If you want to provide your custom names for the generated DTO class properties, you can use the overload of the DtoPropertyAttribute, like so: ```[DtoProperty("PreferredName")]``` or ```[DtoProperty(Name = "OtherName")] ```
+
+### But... where are the generated classes?
+
+- #### If you're targeting .NetStandard or other above (.Net Core, .Net 5, 6, 7, etc...)
+  - Below your project in the Solution Explorer, expand Dependencies
+  - Expand Analyzers > Arisoul.SourceGenerators > Arisoul.SourceGenerators.DataTransferObjects.DtoGenerator
+  - There they are 👍
+
+### Simple example
+
+- The POCO class:
+```
+using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty("Name")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+
+    [DtoProperty]
+    public DateTime Date { get; set; }
+}
+```
+
+- The generated DTO:
+``` 
+#nullable enable
+/*  <auto-generated> ------------------------------------------------------------------------------ 
+        This code was generated by Arisoul.SourceGenerators tool.
+        Changes to this file may cause incorrect behavior and will be lost if
+        the code is regenerated.
+    </auto-generated> ------------------------------------------------------------------------------*/
+
+using System;
+
+namespace DtoGenerator
+{
+    public class PersonDto
+    {
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public DateTime Date { get; set; }
+    }
+}
+```
+- The generated extensions:
+```
+#nullable enable
+/*  <auto-generated> ------------------------------------------------------------------------------ 
+        This code was generated by Arisoul.SourceGenerators tool.
+        Changes to this file may cause incorrect behavior and will be lost if
+        the code is regenerated.
+    </auto-generated> ------------------------------------------------------------------------------*/
+
+using System;
+
+namespace DtoGenerator
+{
+    public static class PersonExtensions
+    {
+        public static PersonDto ToDto(this Person poco)
+        {
+            PersonDto dto = new PersonDto();
+
+            dto.Name = poco.FirstName;
+            dto.LastName = poco.LastName;
+            dto.Date = poco.Date;
+
+            return dto;
+        }
+
+        public static void FromDto(this Person poco, PersonDto dto)
+        {
+            poco.FirstName = dto.Name;
+            poco.LastName = dto.LastName;
+            poco.Date = dto.Date;
+        }
+
+        public static Person ToPoco(this PersonDto dto)
+        {
+            Person poco = new Person();
+
+            poco.FirstName = dto.Name;
+            poco.LastName = dto.LastName;
+            poco.Date = dto.Date;
+
+            return poco;
+        }
+
+        public static void FromPoco(this PersonDto dto, Person poco)
+        {
+            dto.Name = poco.FirstName;
+            dto.LastName = poco.LastName;
+            dto.Date = poco.Date;
+        }
+    }
+}
+```
+
+- Usage Demo
+```
+    public void Demo()
+    {
+        // Create an instance of the POCO class
+        Person pocoPerson = new Person();
+
+        // Map to a DTO (extension)
+        PersonDto dtoPerson = pocoPerson.ToDto();
+
+        // Reverse mapping using the POCO extension
+        pocoPerson.FromDto(dtoPerson);
+
+        // Other reverse mapping using the DTO extension
+        pocoPerson = dtoPerson.ToPoco();
+        
+        // Fill the DTO with the POCO (another extension way)
+        dtoPerson.FromPoco(pocoPerson);
+    }
+```
+
+_If you need more examples, please, let me now. And remember, this has a lot to improve._
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -233,19 +354,11 @@ Project Link: [https://github.com/ARiSoul/Arisoul.SourceGenerators](https://gith
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/rsousa1983
 [product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[c#]: https://img.shields.io/badge/c_sharp-white?style=for-the-badge&logo=csharp&logoColor=blueviolet
+[csharp-url]: https://dotnet.microsoft.com/en-us/languages/csharp
+[netstandard20]: https://img.shields.io/badge/standard_2.0-blue?style=for-the-badge&logo=dotnet&logoColor=white
+[netstandard-url]: https://dotnet.microsoft.com/en-us/platform/dotnet-standard
+[.Net 7]: https://img.shields.io/badge/7-blueviolet?style=for-the-badge&logo=dotnet&logoColor=white
+[net7-url]: https://dotnet.microsoft.com/en-us/download/dotnet/7.0
+[xunit]: https://img.shields.io/badge/xUnit-Tests-green
+[xunit-url]: https://xunit.net/

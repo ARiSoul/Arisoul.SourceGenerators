@@ -1,9 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
+		<Title>Arisoul Source Generators Attributes</Title>
+		<Authors>Arisoul</Authors>
+		<Company>Arisoul</Company>
+		<Description>A very simple package that complements Arisoul.SourceGenerators. </Description>
+		<PackageIcon>Arisoul_Triangle_Fill_128x128.png</PackageIcon>
+		<RepositoryUrl>https://github.com/ARiSoul/Arisoul.SourceGenerators</RepositoryUrl>
+		<PackageTags>source;generators;c#;dotnet;dto;data transfer object;generation;code;attributes</PackageTags>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="E:\Dropbox\Knowledge Base\IMAGENS &amp; ICONS\Arisoul_Triangle_Fill_128x128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 </Project>
