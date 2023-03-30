@@ -65,6 +65,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#release-notes">Release Notes</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -282,7 +283,7 @@ _If you need more examples, please, let me now. And remember, this has a lot to 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Release Notes
-- [v1.0.0 (29/03/2023)](./changelog.md#v1.0.0 (29/03/2023))
+- [v1.0.0 (29/03/2023)](./changelog.md#v1.0.0-(29/03/2023))
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
