@@ -103,9 +103,7 @@ Of course, this is a very very simple tool, so don't be to hard on me 😃 . Any
 - Arisoul SourceGenerator is unit tested with <a href="https://xunit.net/">**xUnit**</a> and <a href="https://github.com/VerifyTests/Verify">**Verify**</a>
 - 11 tests at the moment with a coverage more then 95% as you can see below
 
-<a href="https://github.com/ARiSoul/Arisoul.SourceGenerators">
-    <img src="img/test_coverage.png" alt="Tests Coverage"/>
-</a>
+<img src="img/test_coverage.png" alt="Tests Coverage"/>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -309,7 +307,7 @@ _If you need more examples, please, let me now. And remember, this has a lot to 
 - [ ] Add a type converter option
 - [ ] More to come
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Arisoul/Arisoul.SourceGenerators/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -367,7 +365,7 @@ Project Link: [https://github.com/ARiSoul/Arisoul.SourceGenerators](https://gith
 [issues-shield]: https://img.shields.io/github/issues/Arisoul/Arisoul.SourceGenerators.svg?style=for-the-badge
 [issues-url]: https://github.com/Arisoul/Arisoul.SourceGenerators/issues
 [license-shield]: https://img.shields.io/github/license/Arisoul/Arisoul.SourceGenerators.svg?style=for-the-badge
-[license-url]: https://github.com/Arisoul/Arisoul.SourceGenerators/Arisoul/master/LICENSE.txt
+[license-url]: https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/rsousa1983
 [product-screenshot]: images/screenshot.png
