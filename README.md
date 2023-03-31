@@ -43,6 +43,7 @@
   </p>
 
 [![NuGet](https://img.shields.io/nuget/v/Arisoul.SourceGenerators)](https://www.nuget.org/packages/Arisoul.SourceGenerators/)
+[![Build & Test](https://github.com/ARiSoul/Arisoul.SourceGenerators/actions/workflows/pipelines.yml/badge.svg)](https://github.com/ARiSoul/Arisoul.SourceGenerators/actions/workflows/pipelines.yml)
 </div>
 </br>
 
