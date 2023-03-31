@@ -1,0 +1,46 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build and Publish NuGet Packages
+
+env:
+    SOLUTION_PATH: ./src/Arisoul.SourceGenerators/Arisoul.SourceGenerators.sln
+    AZURE_ARTIFACTS_FEED_URL: https://pkgs.dev.azure.com/arisoul/_packaging/arisoul/nuget/v3/index.json
+    BUILD_CONFIGURATION: 'Release' 
+    DOTNET_VERSION: '7.x'
+    VERSION_FILE: ./src/.github/workflows/configuration.json
+    
+on:
+  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:    
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+      
+    - name: Build Solution
+      run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration '${{ env.BUILD_CONFIGURATION }}'
+
+    - name: Run unit tests
+      run: dotnet test ${{ env.SOLUTION_PATH }} --no-restore --verbosity normal --configuration '${{ env.BUILD_CONFIGURATION }}'
+      
+   # - name: Publish
+   #   if: startsWith(github.ref, 'refs/heads/release')
+   #   run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
