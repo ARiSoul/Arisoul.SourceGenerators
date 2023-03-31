@@ -6,15 +6,18 @@ labels: enhancement
 assignees: ARiSoul
 
 ---
+# Context
+Please, describe the context that originated this request
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+# Suggestion:
+- Add or provide something
+- That adding would be used this way
+- Name suggestions 
+- Constraints suggestions
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+# Related problem
+- If your feature request related to a problem? Please describe it here.
+- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
+# Additional information
 Add any other context or screenshots about the feature request here.
