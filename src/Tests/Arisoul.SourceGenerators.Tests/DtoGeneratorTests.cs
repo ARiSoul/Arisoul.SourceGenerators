@@ -117,6 +117,27 @@ public class Person
     }
 
     [Fact]
+    public Task DtoPropertyAbstractClassShouldNotBeGenerated()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+public abstract class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code);
+    }
+
+    [Fact]
     public Task SourceClassWithMethodShouldVerify()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;

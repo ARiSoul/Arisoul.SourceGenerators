@@ -1,4 +1,5 @@
 ﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
+using System;
 using System.Collections.Immutable;
 
 namespace Arisoul.SourceGenerators.DataTransferObjects;
@@ -11,7 +12,10 @@ public class DtoGenerator : IIncrementalGenerator
 {
     #region Constants
 
-    internal const string FullyQualifiedMarkerName = "Arisoul.SourceGenerators.DataTransferObjects.DtoPropertyAttribute";
+    internal const string DtoNamespace = "Arisoul.SourceGenerators.DataTransferObjects";
+    internal const string FullyQualifiedDtoPropertyMarkerName = $"{DtoNamespace}.{nameof(DtoPropertyAttribute)}";
+    internal const string FullyQualifiedDtoClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoClassGenerationAttribute)}";
+    internal const string FullyQualifiedDtoExtensionsClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoExtensionsClassGenerationAttribute)}";
     internal const string DTO = "dto";
     internal const string POCO = "poco";
 
@@ -46,13 +50,17 @@ public class DtoGenerator : IIncrementalGenerator
     #region Private Methods
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
-      => syntaxNode is ClassDeclarationSyntax;
+      => syntaxNode is ClassDeclarationSyntax classDeclaration;
 
     private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         // do foreach instead of LINQ due performance
 
         var classSyntax = (ClassDeclarationSyntax)context.Node;
+
+        // ignore abstract classes
+        if (classSyntax.Modifiers.Any(x => x.Text.Equals("abstract")))
+            return null;
 
         // loop through all the class members
         foreach (var member in classSyntax!.Members)
@@ -70,7 +78,7 @@ public class DtoGenerator : IIncrementalGenerator
             foreach (var attribute in propertySymbol.GetAttributes())
             {
                 // is this the attribute?
-                if (attribute.AttributeClass == null || !FullyQualifiedMarkerName.Contains(attribute.AttributeClass.ToString()))
+                if (attribute.AttributeClass == null || !FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.ToString()))
                     continue;
 
                 // attribute found in at least one property, return the class
@@ -110,7 +118,7 @@ public class DtoGenerator : IIncrementalGenerator
     {
         var classesToGenerate = new List<DtoGeneratorClassInfo>();
 
-        INamedTypeSymbol? markerAttribute = compilation.GetTypeByMetadataName(FullyQualifiedMarkerName);
+        INamedTypeSymbol? markerAttribute = compilation.GetTypeByMetadataName(FullyQualifiedDtoPropertyMarkerName);
 
         if (markerAttribute == null)
             return classesToGenerate;
@@ -138,7 +146,7 @@ public class DtoGenerator : IIncrementalGenerator
                 foreach (var attribute in propertySymbol.GetAttributes())
                 {
                     // is this the attribute?
-                    if (attribute.AttributeClass == null || !FullyQualifiedMarkerName.Contains(attribute.AttributeClass.ToString()))
+                    if (attribute.AttributeClass == null || !FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.ToString()))
                         continue;
 
                     // the property cannot be readonly
@@ -204,6 +212,76 @@ public class DtoGenerator : IIncrementalGenerator
                 continue;
 
             var className = classDeclaration.Identifier.ToString();
+
+            // if the class has the attribute DtoClassGeneration defined, get corresponding information
+
+            // check if class has attributes
+            if (classDeclaration.AttributeLists.Any())
+            {
+                string[] classGenerationAttributes = new[]
+                {
+                    FullyQualifiedDtoClassGenerationMarkerName,
+                    FullyQualifiedDtoPropertyMarkerName
+                };
+
+                foreach (var classGenerationAttribute in classGenerationAttributes)
+                {
+                    foreach (var classAttributeList in classDeclaration.AttributeLists)
+                    {
+                        foreach (var attribute in classAttributeList.Attributes)
+                        {
+                            // has a DtoClassGeneration attribute
+                            if (attribute.Name == null
+                                || !classGenerationAttribute.Contains(attribute.Name.ToString()))
+                                continue;
+
+                            // it has a valid attribute, go on
+
+                            // Check the constructor arguments
+                            // TODO: follow same approach of property attribute constructors?
+                            if (!attribute.Contains)
+                            {
+                                ImmutableArray<TypedConstant> args = attribute.ConstructorArguments;
+
+                                // make sure we don't have any errors
+                                foreach (TypedConstant arg in args)
+                                    if (arg.Kind == TypedConstantKind.Error)
+                                        // have an error, so don't try and do any generation
+                                        break;
+
+                                // Use the position of the argument to infer which value is set
+                                switch (args.Length)
+                                {
+                                    case 1:
+                                        dtoPropertyName = (string)args[0].Value!;
+                                        break;
+                                }
+                            }
+
+                            // now check for named arguments
+                            if (!attribute.NamedArguments.IsEmpty)
+                                foreach (KeyValuePair<string, TypedConstant> arg in attribute.NamedArguments)
+                                {
+                                    TypedConstant typedConstant = arg.Value;
+                                    if (typedConstant.Kind == TypedConstantKind.Error)
+                                        // have an error, so don't try and do any generation
+                                        break;
+                                    else
+                                    {
+                                        // Use the constructor argument or property name to infer which value is set
+                                        switch (arg.Key)
+                                        {
+                                            case "Name":
+                                                dtoPropertyName = (string)typedConstant.Value!;
+                                                break;
+                                        }
+                                    }
+                                }
+
+                        }
+                    }
+                }
+            }
 
             var @namespace = classDeclaration.GetNamespace();
 
