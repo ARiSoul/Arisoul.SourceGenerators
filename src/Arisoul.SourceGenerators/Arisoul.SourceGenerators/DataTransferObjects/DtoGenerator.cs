@@ -1,4 +1,5 @@
 ﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Immutable;
 
@@ -20,9 +21,6 @@ public class DtoGenerator : IIncrementalGenerator
     internal const string POCO = "poco";
 
     #endregion
-
-    // TODO: Add type converter option in the attribute?
-    // TODO: package in the proper way
 
     #region Public Methods
 
@@ -50,7 +48,7 @@ public class DtoGenerator : IIncrementalGenerator
     #region Private Methods
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
-      => syntaxNode is ClassDeclarationSyntax classDeclaration;
+      => syntaxNode is ClassDeclarationSyntax;
 
     private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
@@ -58,9 +56,7 @@ public class DtoGenerator : IIncrementalGenerator
 
         var classSyntax = (ClassDeclarationSyntax)context.Node;
 
-        // ignore abstract classes
-        if (classSyntax.Modifiers.Any(x => x.Text.Equals("abstract")))
-            return null;
+       
 
         // loop through all the class members
         foreach (var member in classSyntax!.Members)
@@ -128,13 +124,28 @@ public class DtoGenerator : IIncrementalGenerator
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
+            var className = classDeclaration.Identifier.ToString();
+
+            // class cannot be abstract
+            bool classIsAbstract = false;
+            foreach (var modifier in classDeclaration.Modifiers)
+                if (modifier.Text.Equals("abstract"))
+                {
+                    context.ReportDiagnostic(DTODiagnostics.AbstractClassDiagnostic(className, classDeclaration));
+                    classIsAbstract = true;
+                    break;
+                }
+
+            if (classIsAbstract)
+                continue;
+
             var propsToGenerate = new List<DtoGeneratorPropertyInfo>();
 
             // loop through all class members
             foreach (var member in classDeclaration.Members)
             {
                 // must have attributes
-                if (!member.AttributeLists.Any())
+                if (member.AttributeLists.Count == 0)
                     continue;
 
                 // must be a property
@@ -142,19 +153,19 @@ public class DtoGenerator : IIncrementalGenerator
                 if (propSemanticModel == null || propSemanticModel.GetDeclaredSymbol(member) is not IPropertySymbol propertySymbol)
                     continue;
 
+                // the property cannot be readonly
+                if (propertySymbol.IsReadOnly)
+                {
+                    context.ReportDiagnostic(DTODiagnostics.ReadonlyPropertyDiagnostic(propertySymbol, member));
+                    continue;
+                }
+
                 // loop through attributes and find the required attribute
                 foreach (var attribute in propertySymbol.GetAttributes())
                 {
                     // is this the attribute?
                     if (attribute.AttributeClass == null || !FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.ToString()))
                         continue;
-
-                    // the property cannot be readonly
-                    if (propertySymbol.IsReadOnly)
-                    {
-                        context.ReportDiagnostic(DTODiagnostics.ReadonlyPropertyDiagnostic(propertySymbol, member));
-                        continue;
-                    }
 
                     // this is the attribute, go on
                     string? dtoPropertyName = propertySymbol.Name;
@@ -208,15 +219,13 @@ public class DtoGenerator : IIncrementalGenerator
                 }
             }
 
-            if (!propsToGenerate.Any())
+            if (propsToGenerate.Count == 0)
                 continue;
 
-            var className = classDeclaration.Identifier.ToString();
-
-            // if the class has the attribute DtoClassGeneration defined, get corresponding information
+            // if the class has a DtoClassGeneration attribute defined, get corresponding information
 
             // check if class has attributes
-            if (classDeclaration.AttributeLists.Any())
+            if (classDeclaration.AttributeLists.Count > 0)
             {
                 string[] classGenerationAttributes = new[]
                 {
@@ -235,49 +244,23 @@ public class DtoGenerator : IIncrementalGenerator
                                 || !classGenerationAttribute.Contains(attribute.Name.ToString()))
                                 continue;
 
+                            // has arguments
+                            if (attribute.ArgumentList == null 
+                                || attribute.ArgumentList.Arguments.Count == 0)
+                                continue;
+
                             // it has a valid attribute, go on
 
-                            // Check the constructor arguments
-                            // TODO: follow same approach of property attribute constructors?
-                            if (!attribute.Contains)
+                            foreach (var arg in attribute.ArgumentList.Arguments)
                             {
-                                ImmutableArray<TypedConstant> args = attribute.ConstructorArguments;
+                                if (arg.NameEquals == null || arg.NameEquals.Name.Identifier.Value == null)
+                                    continue;
 
-                                // make sure we don't have any errors
-                                foreach (TypedConstant arg in args)
-                                    if (arg.Kind == TypedConstantKind.Error)
-                                        // have an error, so don't try and do any generation
-                                        break;
-
-                                // Use the position of the argument to infer which value is set
-                                switch (args.Length)
+                                if (arg.NameEquals.Name.Identifier.Value.Equals(nameof(DtoClassGenerationAttribute.Name)))
                                 {
-                                    case 1:
-                                        dtoPropertyName = (string)args[0].Value!;
-                                        break;
+                                    // TODO: set the dto class name to generate: arg.Expression.GetFirstToken().ValueText
                                 }
                             }
-
-                            // now check for named arguments
-                            if (!attribute.NamedArguments.IsEmpty)
-                                foreach (KeyValuePair<string, TypedConstant> arg in attribute.NamedArguments)
-                                {
-                                    TypedConstant typedConstant = arg.Value;
-                                    if (typedConstant.Kind == TypedConstantKind.Error)
-                                        // have an error, so don't try and do any generation
-                                        break;
-                                    else
-                                    {
-                                        // Use the constructor argument or property name to infer which value is set
-                                        switch (arg.Key)
-                                        {
-                                            case "Name":
-                                                dtoPropertyName = (string)typedConstant.Value!;
-                                                break;
-                                        }
-                                    }
-                                }
-
                         }
                     }
                 }
@@ -285,6 +268,7 @@ public class DtoGenerator : IIncrementalGenerator
 
             var @namespace = classDeclaration.GetNamespace();
 
+            // TODO: add corresponding properties in the DtoGeneratorClassInfo for DtoClass and ExtensionsClass
             classesToGenerate.Add(new DtoGeneratorClassInfo(className, @namespace, propsToGenerate));
         }
 

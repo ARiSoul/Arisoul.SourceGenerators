@@ -16,4 +16,17 @@ public class DTODiagnostics
 
         return Diagnostic.Create(descriptor, syntax.GetLocation());
     }
+
+    public static Diagnostic AbstractClassDiagnostic(string className, MemberDeclarationSyntax syntax)
+    {
+        var descriptor = new DiagnosticDescriptor(
+            id: DC.AbstractClass.ID,
+            title: DC.AbstractClass.Title,
+            messageFormat: string.Format(DC.AbstractClass.Description, className),
+            category: DC.AbstractClass.Category,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        return Diagnostic.Create(descriptor, syntax.GetLocation());
+    }
 }

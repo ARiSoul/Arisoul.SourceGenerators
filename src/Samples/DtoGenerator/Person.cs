@@ -2,9 +2,9 @@
 
 namespace DtoGenerator;
 
-[DtoClassGeneration("DomainPerson")]
-[DtoExtensionsClassGeneration("PersonMap")]
-public abstract class Person
+[DtoClassGeneration(Name = "DomainPerson")]
+[DtoExtensionsClassGeneration]
+public class Person
 {
     public int Id { get; set; }
 
