@@ -285,7 +285,7 @@ _Read the [release notes](#release-notes) form more information. If you need mor
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Release Notes
-- [v1.0.1 (03/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v1.0.1-(03/04/2023))
+- [v1.0.1 (03/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.1)
 - [v1.0.0 (29/03/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v1.0.0-(29/03/2023))
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
