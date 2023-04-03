@@ -2,6 +2,8 @@
 
 namespace DtoGenerator;
 
+[DtoClassGeneration(Name = "DomainPerson")]
+[DtoExtensionsClassGeneration]
 public class Person
 {
     public int Id { get; set; }
