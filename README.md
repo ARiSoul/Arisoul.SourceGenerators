@@ -102,7 +102,7 @@ Of course, this is a very very simple tool, so don't be to hard on me 😃 . Any
 
 ## Tests Coverage
 - Arisoul SourceGenerator is unit tested with <a href="https://xunit.net/">**xUnit**</a> and <a href="https://github.com/VerifyTests/Verify">**Verify**</a>
-- 11 tests at the moment with a coverage more then 95% as you can see below
+- 17 tests at the moment with a coverage more then 95% as you can see below
 
 <img src="img/test_coverage.png" alt="Tests Coverage"/>
 
@@ -289,9 +289,9 @@ _If you need more examples, please, let me now. And remember, this has a lot to 
 <!-- ROADMAP -->
 # Roadmap
 
-- [ ] Allow to set generated classes names
+- [x] Allow to set generated classes names
 - [ ] Allow to set classes to generate
-- [ ] Allow to set namespace in each generated class
+- [x] Allow to set namespace in each generated class
 - [ ] Mapping collections
 - [ ] Allow generated files persisting in disk
     - Actually, this option can be achived by adding this to your project:
