@@ -102,7 +102,7 @@ Of course, this is a very very simple tool, so don't be to hard on me 😃 . Any
 
 ## Tests Coverage
 - Arisoul SourceGenerator is unit tested with <a href="https://xunit.net/">**xUnit**</a> and <a href="https://github.com/VerifyTests/Verify">**Verify**</a>
-- 17 tests at the moment with a coverage more then 95% as you can see below
+- 26 tests at the moment with a coverage more then 95% as you can see below
 
 <img src="img/test_coverage.png" alt="Tests Coverage"/>
 
