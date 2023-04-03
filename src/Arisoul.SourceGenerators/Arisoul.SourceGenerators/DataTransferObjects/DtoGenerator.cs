@@ -98,6 +98,9 @@ public class DtoGenerator : IIncrementalGenerator
         {
             var dtoClassFileName = $"{classToGenerate.DtoClassGenerationInfo.Name}.g.cs";
             var dtoClassCode = GetDtoClassCode(classToGenerate);
+
+            // TODO: check extensions class generation behavior
+            // TODO: refactor GetTypesToGenerate method
             var extensionsClassFileName = $"{classToGenerate.ExtensionsClassGenerationInfo.Name}.g.cs";
             var extensionsClassCode = GetDtoExtensionsClassCode(classToGenerate);
 
@@ -235,10 +238,10 @@ public class DtoGenerator : IIncrementalGenerator
             };
 
             dtoGeneratorClassInfo = new DtoGeneratorClassInfo(
-                sourceClassName, 
-                sourceNamespace, 
-                dtoClassGenerationInfo, 
-                extensionsClassGenerationInfo, 
+                sourceClassName,
+                sourceNamespace,
+                dtoClassGenerationInfo,
+                extensionsClassGenerationInfo,
                 propsToGenerate);
 
             // if the class has a DtoClassGeneration attribute defined, get corresponding information
@@ -300,6 +303,8 @@ public class DtoGenerator : IIncrementalGenerator
                                             dtoGeneratorClassInfo.ExtensionsClassGenerationInfo.Name = arg.Value.ToString();
                                         else if (arg.Key.Equals(nameof(BaseDtoClassGenerationAttribute.Namespace)))
                                             dtoGeneratorClassInfo.ExtensionsClassGenerationInfo.Namespace = arg.Value.ToString();
+                                        else if (arg.Key.Equals(nameof(DtoExtensionsClassGenerationAttribute.GenerationBehavior)))
+                                            dtoGeneratorClassInfo.ExtensionsClassGenerationInfo.GenerationBehavior = (GenerationBehavior)arg.Value;
                                     }
                                 }
 
@@ -350,7 +355,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
         sb.Append($@"{ClassWriter.WriteClassHeader(true)}
 
 {ClassWriter.WriteUsing("System")}");
-        if(!string.Equals(classInfo.DtoClassGenerationInfo.Namespace, classInfo.ExtensionsClassGenerationInfo.Namespace, StringComparison.Ordinal))
+        if (!string.Equals(classInfo.DtoClassGenerationInfo.Namespace, classInfo.ExtensionsClassGenerationInfo.Namespace, StringComparison.Ordinal))
         {
             sb.Append($@"
 {ClassWriter.WriteUsing(classInfo.DtoClassGenerationInfo.Namespace)}");
