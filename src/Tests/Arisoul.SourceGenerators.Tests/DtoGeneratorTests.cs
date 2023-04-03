@@ -138,7 +138,7 @@ public abstract class Person
     }
 
     [Fact]
-    public Task DtoClassGenerationWithNameDefinedShouldVerify()
+    public Task DtoClassGenerationWithCustomDtoClassNameDefinedShouldVerify()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
 
@@ -150,7 +150,97 @@ public class Person
     public int Id { get; set; }
 
     [DtoProperty(""TestAgain"")]
-    public string FirstName { get; }
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code);
+    }
+
+    [Fact]
+    public Task ExtensionsClassGenerationWithCustomClassNameDefinedShouldVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoExtensionsClassGeneration(Name = ""CustomPersonExtensions"")]
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code);
+    }
+
+    [Fact]
+    public Task DtoClassGenerationWithCustomDtoAndExtensionsClassNameDefinedShouldVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoClassGeneration(Name = ""PersonCustom"")]
+[DtoExtensionsClassGeneration(Name = ""CustomPersonExtensions"")]
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code);
+    }
+
+    [Fact]
+    public Task DtoClassGenerationWithCustomDtoNamespaceDefinedShouldVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoClassGeneration(Name = ""PersonCustom"", Namespace = ""MyNamespace"")]
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code);
+    }
+
+    [Fact]
+    public Task DtoClassGenerationWithCustomNamespacesDefinedShouldVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoClassGeneration(Name = ""PersonCustom"", Namespace = ""MyNamespace"")]
+[DtoExtensionsClassGeneration(Namespace = ""ExtensionsNamespace"")]
+public class Person
+{
+    public int Id { get; set; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
 
     [DtoProperty]
     public string LastName { get; set; }

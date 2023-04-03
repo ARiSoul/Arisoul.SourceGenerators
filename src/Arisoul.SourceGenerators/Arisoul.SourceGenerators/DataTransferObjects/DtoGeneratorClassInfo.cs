@@ -1,16 +1,25 @@
 ﻿namespace Arisoul.SourceGenerators.DataTransferObjects;
 
-public class DtoGeneratorClassInfo
+internal class DtoGeneratorClassInfo
 {
-    public string ClassName { get; set; }
-    public string Namespace { get; set; }
+    public string SourceClassName { get; set; }
+    public string SourceNamespace { get; set; }
+    public DtoClassGenerationInfo DtoClassGenerationInfo { get; set; }
+    public ExtensionsClassGenerationInfo ExtensionsClassGenerationInfo { get; set; }
 
     public ICollection<DtoGeneratorPropertyInfo> Properties { get; set; }
 
-    public DtoGeneratorClassInfo(string className, string @namespace, ICollection<DtoGeneratorPropertyInfo> propertyInfos)
+    public DtoGeneratorClassInfo(
+        string sourceClassName,
+        string sourceNamespace,
+        DtoClassGenerationInfo dtoClassGenerationInfo,
+        ExtensionsClassGenerationInfo extensionsClassGenerationInfo, 
+        ICollection<DtoGeneratorPropertyInfo> propertyInfos)
     {
-        ClassName = className;
-        Namespace = @namespace;
+        SourceClassName = sourceClassName;
+        SourceNamespace = sourceNamespace;
+        DtoClassGenerationInfo = dtoClassGenerationInfo;
+        ExtensionsClassGenerationInfo = extensionsClassGenerationInfo;
         Properties = propertyInfos;
     }
 }

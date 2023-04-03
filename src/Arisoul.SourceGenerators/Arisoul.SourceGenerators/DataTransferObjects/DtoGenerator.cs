@@ -56,7 +56,7 @@ public class DtoGenerator : IIncrementalGenerator
 
         var classSyntax = (ClassDeclarationSyntax)context.Node;
 
-       
+
 
         // loop through all the class members
         foreach (var member in classSyntax!.Members)
@@ -94,16 +94,12 @@ public class DtoGenerator : IIncrementalGenerator
 
         List<DtoGeneratorClassInfo> classesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context);
 
-        string dtoCapitalized = DTO.Capitalize()!;
-
         foreach (var classToGenerate in classesToGenerate)
         {
-            var dtoClassName = $"{classToGenerate.ClassName}{dtoCapitalized}";
-            var dtoClassFileName = $"{dtoClassName}.g.cs";
-            var dtoClassCode = GetDtoClassCode(classToGenerate, dtoClassName);
-            var extensionsClassName = $"{classToGenerate.ClassName}Extensions";
-            var extensionsClassFileName = $"{extensionsClassName}.g.cs";
-            var extensionsClassCode = GetDtoExtensionsClassCode(classToGenerate, dtoCapitalized, dtoClassName, extensionsClassName);
+            var dtoClassFileName = $"{classToGenerate.DtoClassGenerationInfo.Name}.g.cs";
+            var dtoClassCode = GetDtoClassCode(classToGenerate);
+            var extensionsClassFileName = $"{classToGenerate.ExtensionsClassGenerationInfo.Name}.g.cs";
+            var extensionsClassCode = GetDtoExtensionsClassCode(classToGenerate);
 
             context.AddSource(dtoClassFileName, dtoClassCode);
             context.AddSource(extensionsClassFileName, extensionsClassCode);
@@ -112,26 +108,28 @@ public class DtoGenerator : IIncrementalGenerator
 
     private static List<DtoGeneratorClassInfo> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> distinctClasses, SourceProductionContext context)
     {
-        var classesToGenerate = new List<DtoGeneratorClassInfo>();
+        var dtoGeneratorClassInfoList = new List<DtoGeneratorClassInfo>();
 
         INamedTypeSymbol? markerAttribute = compilation.GetTypeByMetadataName(FullyQualifiedDtoPropertyMarkerName);
 
         if (markerAttribute == null)
-            return classesToGenerate;
+            return dtoGeneratorClassInfoList;
 
         // loop through all classes
         foreach (var classDeclaration in distinctClasses)
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
-            var className = classDeclaration.Identifier.ToString();
+            DtoGeneratorClassInfo dtoGeneratorClassInfo = null;
+
+            var sourceClassName = classDeclaration.Identifier.ToString();
 
             // class cannot be abstract
             bool classIsAbstract = false;
             foreach (var modifier in classDeclaration.Modifiers)
                 if (modifier.Text.Equals("abstract"))
                 {
-                    context.ReportDiagnostic(DTODiagnostics.AbstractClassDiagnostic(className, classDeclaration));
+                    context.ReportDiagnostic(DTODiagnostics.AbstractClassDiagnostic(sourceClassName, classDeclaration));
                     classIsAbstract = true;
                     break;
                 }
@@ -222,69 +220,111 @@ public class DtoGenerator : IIncrementalGenerator
             if (propsToGenerate.Count == 0)
                 continue;
 
+            var sourceNamespace = classDeclaration.GetNamespace();
+
+            DtoClassGenerationInfo dtoClassGenerationInfo = new()
+            {
+                Name = $"{sourceClassName}{DTO.Capitalize()}",
+                Namespace = sourceNamespace
+            };
+
+            ExtensionsClassGenerationInfo extensionsClassGenerationInfo = new()
+            {
+                Name = $"{sourceClassName}Extensions",
+                Namespace = sourceNamespace
+            };
+
+            dtoGeneratorClassInfo = new DtoGeneratorClassInfo(
+                sourceClassName, 
+                sourceNamespace, 
+                dtoClassGenerationInfo, 
+                extensionsClassGenerationInfo, 
+                propsToGenerate);
+
             // if the class has a DtoClassGeneration attribute defined, get corresponding information
 
             // check if class has attributes
             if (classDeclaration.AttributeLists.Count > 0)
             {
-                string[] classGenerationAttributes = new[]
+                string[] classExpectedAttributes = new[]
                 {
                     FullyQualifiedDtoClassGenerationMarkerName,
-                    FullyQualifiedDtoPropertyMarkerName
+                    FullyQualifiedDtoExtensionsClassGenerationMarkerName
                 };
 
-                foreach (var classGenerationAttribute in classGenerationAttributes)
+                // get class symbol 
+                var classSemanticModel = compilation.GetSemanticModel(classDeclaration.SyntaxTree);
+                if (classSemanticModel == null || classSemanticModel.GetDeclaredSymbol(classDeclaration) is not INamedTypeSymbol classSymbol)
+                    continue;
+
+                foreach (var attribute in classSymbol.GetAttributes())
                 {
-                    foreach (var classAttributeList in classDeclaration.AttributeLists)
+                    // filter by expected attributes
+                    foreach (var expectedAttribute in classExpectedAttributes)
                     {
-                        foreach (var attribute in classAttributeList.Attributes)
+                        if (attribute.AttributeClass == null || !expectedAttribute.Contains(attribute.AttributeClass.ToString()))
+                            continue;
+
+                        // now check for named arguments (these attributes will not have constructor arguments, to facilitate generation)
+                        if (!attribute.NamedArguments.IsEmpty)
                         {
-                            // has a DtoClassGeneration attribute
-                            if (attribute.Name == null
-                                || !classGenerationAttribute.Contains(attribute.Name.ToString()))
-                                continue;
+                            Dictionary<string, object> arguments = new Dictionary<string, object>();
 
-                            // has arguments
-                            if (attribute.ArgumentList == null 
-                                || attribute.ArgumentList.Arguments.Count == 0)
-                                continue;
-
-                            // it has a valid attribute, go on
-
-                            foreach (var arg in attribute.ArgumentList.Arguments)
+                            // grant there's no error
+                            foreach (KeyValuePair<string, TypedConstant> arg in attribute.NamedArguments)
                             {
-                                if (arg.NameEquals == null || arg.NameEquals.Name.Identifier.Value == null)
-                                    continue;
-
-                                if (arg.NameEquals.Name.Identifier.Value.Equals(nameof(DtoClassGenerationAttribute.Name)))
-                                {
-                                    // TODO: set the dto class name to generate: arg.Expression.GetFirstToken().ValueText
-                                }
+                                TypedConstant typedConstant = arg.Value;
+                                if (typedConstant.Kind == TypedConstantKind.Error)
+                                    // have an error, so don't try and do any generation
+                                    break;
+                                else
+                                    arguments.Add(arg.Key, typedConstant.Value!);
                             }
+
+                            // if there's no error, arguments should exist
+                            if (arguments.Count > 0)
+                                foreach (var arg in arguments)
+                                {
+                                    // dto class properties
+                                    if (FullyQualifiedDtoClassGenerationMarkerName.Contains(attribute.AttributeClass.Name))
+                                    {
+                                        if (arg.Key.Equals(nameof(BaseDtoClassGenerationAttribute.Name)))
+                                            dtoGeneratorClassInfo.DtoClassGenerationInfo.Name = arg.Value.ToString();
+                                        else if (arg.Key.Equals(nameof(BaseDtoClassGenerationAttribute.Namespace)))
+                                            dtoGeneratorClassInfo.DtoClassGenerationInfo.Namespace = arg.Value.ToString();
+                                    }
+                                    // extensions class properties
+                                    else if (FullyQualifiedDtoExtensionsClassGenerationMarkerName.Contains(attribute.AttributeClass.Name))
+                                    {
+                                        if (arg.Key.Equals(nameof(BaseDtoClassGenerationAttribute.Name)))
+                                            dtoGeneratorClassInfo.ExtensionsClassGenerationInfo.Name = arg.Value.ToString();
+                                        else if (arg.Key.Equals(nameof(BaseDtoClassGenerationAttribute.Namespace)))
+                                            dtoGeneratorClassInfo.ExtensionsClassGenerationInfo.Namespace = arg.Value.ToString();
+                                    }
+                                }
+
+                            break;
                         }
                     }
                 }
             }
 
-            var @namespace = classDeclaration.GetNamespace();
-
-            // TODO: add corresponding properties in the DtoGeneratorClassInfo for DtoClass and ExtensionsClass
-            classesToGenerate.Add(new DtoGeneratorClassInfo(className, @namespace, propsToGenerate));
+            dtoGeneratorClassInfoList.Add(dtoGeneratorClassInfo);
         }
 
-        return classesToGenerate;
+        return dtoGeneratorClassInfoList;
     }
 
-    private static SourceText GetDtoClassCode(DtoGeneratorClassInfo classInfo, string dtoClassName)
+    private static SourceText GetDtoClassCode(DtoGeneratorClassInfo classInfo)
     {
         var sb = new StringBuilder();
         sb.Append(@$"{ClassWriter.WriteClassHeader(true)}
 
 {ClassWriter.WriteUsing("System")}
 
-namespace {classInfo.Namespace}
+namespace {classInfo.DtoClassGenerationInfo.Namespace}
 {{
-    public class {dtoClassName}
+    public class {classInfo.DtoClassGenerationInfo.Name}
     {{");
 
         foreach (var prop in classInfo.Properties)
@@ -298,21 +338,37 @@ namespace {classInfo.Namespace}
         return SourceText.From(sb.ToString(), Encoding.UTF8);
     }
 
-    private static SourceText GetDtoExtensionsClassCode(DtoGeneratorClassInfo classInfo, string dtoCapitalized, string dtoClassName, string extensionsClassName)
+    private static SourceText GetDtoExtensionsClassCode(DtoGeneratorClassInfo classInfo)
     {
         string pocoCapitalized = POCO.Capitalize()!;
+        string dtoCapitalized = DTO.Capitalize()!;
+        string dtoClassName = classInfo.DtoClassGenerationInfo.Name;
+        string extensionsClassName = classInfo.ExtensionsClassGenerationInfo.Name;
 
         var sb = new StringBuilder();
 
         sb.Append($@"{ClassWriter.WriteClassHeader(true)}
 
-{ClassWriter.WriteUsing("System")}
+{ClassWriter.WriteUsing("System")}");
+        if(!string.Equals(classInfo.DtoClassGenerationInfo.Namespace, classInfo.ExtensionsClassGenerationInfo.Namespace, StringComparison.Ordinal))
+        {
+            sb.Append($@"
+{ClassWriter.WriteUsing(classInfo.DtoClassGenerationInfo.Namespace)}");
+        }
 
-namespace {classInfo.Namespace}
+        if (!string.Equals(classInfo.SourceNamespace, classInfo.ExtensionsClassGenerationInfo.Namespace, StringComparison.Ordinal))
+        {
+            sb.Append($@"
+{ClassWriter.WriteUsing(classInfo.SourceNamespace)}");
+        }
+
+        sb.Append($@"
+
+namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 {{
     public static class {extensionsClassName}
     {{
-        public static {dtoClassName} To{dtoCapitalized}(this {classInfo.ClassName} {POCO})
+        public static {dtoClassName} To{dtoCapitalized}(this {classInfo.SourceClassName} {POCO})
         {{
             {dtoClassName} {DTO} = new {dtoClassName}();
 ");
@@ -326,7 +382,7 @@ namespace {classInfo.Namespace}
             return {DTO};
         }}
 
-        public static void From{dtoCapitalized}(this {classInfo.ClassName} {POCO}, {dtoClassName} {DTO})
+        public static void From{dtoCapitalized}(this {classInfo.SourceClassName} {POCO}, {dtoClassName} {DTO})
         {{");
 
         foreach (var prop in classInfo.Properties)
@@ -336,9 +392,9 @@ namespace {classInfo.Namespace}
         sb.Append($@"
         }}
 
-        public static {classInfo.ClassName} To{pocoCapitalized}(this {dtoClassName} {DTO})
+        public static {classInfo.SourceClassName} To{pocoCapitalized}(this {dtoClassName} {DTO})
         {{
-            {classInfo.ClassName} {POCO} = new {classInfo.ClassName}();
+            {classInfo.SourceClassName} {POCO} = new {classInfo.SourceClassName}();
 ");
 
         foreach (var prop in classInfo.Properties)
@@ -350,7 +406,7 @@ namespace {classInfo.Namespace}
             return {POCO};
         }}
 
-        public static void From{pocoCapitalized}(this {dtoClassName} {DTO}, {classInfo.ClassName} {POCO})
+        public static void From{pocoCapitalized}(this {dtoClassName} {DTO}, {classInfo.SourceClassName} {POCO})
         {{");
 
         foreach (var prop in classInfo.Properties)
