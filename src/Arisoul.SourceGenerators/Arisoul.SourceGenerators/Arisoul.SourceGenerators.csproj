@@ -12,8 +12,7 @@
 		<Authors>Arisoul</Authors>
 		<Company>Arisoul</Company>
 		<Description>This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and extensions that facilitate mappings. 
-In this first version, only single entities are considered in mapping extensions. The generated DTO class will have the name of the source class followed by Dto, and the extensions class will have the suffix Extensions. Ex.: Class 'Person', will generate 'PersonDto' and 'PersonExtensions'.
-The marker attribute to trigger the generation is called 'DtoPropertyAttribute ' and it's provided in the package in the Arisoul.SourceGenerators.Attributes dll. Any suggestions or ideas are welcome in the GitHub repo.</Description>
+In this first version, only single entities are considered in mapping extensions. The marker attribute to trigger the generation is called 'DtoPropertyAttribute' and it's provided in the package in the Arisoul.SourceGenerators.Attributes dll. Any suggestions or ideas are welcome in the GitHub repo.</Description>
 		<PackageProjectUrl></PackageProjectUrl>
 		<PackageIcon>Arisoul_Triangle_Fill_128x128.png</PackageIcon>
 		<RepositoryUrl>https://github.com/ARiSoul/Arisoul.SourceGenerators</RepositoryUrl>
@@ -21,6 +20,8 @@ The marker attribute to trigger the generation is called 'DtoPropertyAttribute '
 		<PackageOutputPath>$(OutputPath)</PackageOutputPath>
 		<IncludeSymbols>False</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageVersion>1.0.1</PackageVersion>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<!--<PropertyGroup>

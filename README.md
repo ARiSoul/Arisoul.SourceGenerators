@@ -81,13 +81,15 @@
 
 I found myself many times creating **POCO** classes, or **Entity Models**, and then rewriting by hand new classes for the corresponding DTOs. I think that this a very boring task, so I decided to give the <a href="https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview">**.Net Source Generators**</a> a try, and do some of that job for me. I then understood that using <a href="https://automapper.org/">**AutoMapper**</a>, <a href="https://github.com/MapsterMapper/Mapster">**Mapster**</a>, etc. it's all good and all, but why don't to try to genereate some extensions helpers for simple scenarios?
 
-In this first version, only single entities are considered in mapping extensions. The generated DTO class will have the name of the source class followed by Dto, and the extensions class will have the suffix Extensions. Ex.: Class 'Person', will generate 'PersonDto' and 'PersonExtensions'.
+In this first version, only single entities are considered in mapping extensions.
 
 The marker attribute to trigger the generation is called **DtoPropertyAttribute** and it's provided in the package through the **Arisoul.SourceGenerators.Attributes** dll that comes together. 
 
 I intend to grow the package as needed to allow other generations, and make it better.
 
 Of course, this is a very very simple tool, so don't be to hard on me 😃 . Any suggestions or ideas are welcome, such as issues.
+
+You can check some simple examples [here](#simple-examples). Also, check the [release notes](#release-notes) for more details.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,7 +104,8 @@ Of course, this is a very very simple tool, so don't be to hard on me 😃 . Any
 
 ## Tests Coverage
 - Arisoul SourceGenerator is unit tested with <a href="https://xunit.net/">**xUnit**</a> and <a href="https://github.com/VerifyTests/Verify">**Verify**</a>
-- 17 tests at the moment with a coverage more then 95% as you can see below
+- To report the Visual Studio extension <a href="https://github.com/FortuneN/FineCodeCoverage">**Fine Code Coverage**</a> is used
+- 26 tests at the moment with a coverage more than ***90%*** as you can see below
 
 <img src="img/test_coverage.png" alt="Tests Coverage"/>
 
@@ -122,17 +125,17 @@ Choose how to install the package:
 
 * .NET CLI
   ```sh
-  dotnet add package Arisoul.SourceGenerators --version 1.0.0
+  dotnet add package Arisoul.SourceGenerators --version 1.0.1
   ```
 
 * Package Manager
   ```sh
-  NuGet\Install-Package Arisoul.SourceGenerators -Version 1.0.0
+  NuGet\Install-Package Arisoul.SourceGenerators -Version 1.0.1
   ```
 
 * Directly in your .csproj
   ```sh
-  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.0" />
+  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.1" />
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -277,11 +280,12 @@ namespace DtoGenerator
     }
 ```
 
-_If you need more examples, please, let me now. And remember, this has a lot to improve._
+_Read the [release notes](#release-notes) form more information. If you need more examples, please, let me now. And remember, this has a lot to improve._
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Release Notes
+- [v1.0.1 (03/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v1.0.1-(03/04/2023))
 - [v1.0.0 (29/03/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v1.0.0-(29/03/2023))
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -290,7 +294,7 @@ _If you need more examples, please, let me now. And remember, this has a lot to 
 # Roadmap
 
 - [x] Allow to set generated classes names
-- [ ] Allow to set classes to generate
+- [x] Allow to set classes to generate
 - [x] Allow to set namespace in each generated class
 - [ ] Mapping collections
 - [ ] Allow generated files persisting in disk
