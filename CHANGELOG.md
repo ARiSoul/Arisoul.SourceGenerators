@@ -4,6 +4,10 @@
 
 Here you can find the release notes of each version of the project from more recent to older ones. 
 
+# v1.0.1 (03/04/2023)
+
+- Check release notes [here](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.1)
+
 # v1.0.0 (29/03/2023)
 
 - This was the first release
@@ -11,7 +15,3 @@ Here you can find the release notes of each version of the project from more rec
 - Add `using Arisoul.SourceGenerators.DataTransferObjects;` to the top of your class
 - Decorate the properties you want to be considered in generation with the attribute `[DtoProperty]`
 - Or to costumize the name of the property generated use `[DtoProperty("CustomName")]` or `[DtoProperty(Name = "CustomName")]`
-
-# v1.0.1 (03/04/2023)
-
-- Check release notes [here](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.1)
