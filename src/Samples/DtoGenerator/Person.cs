@@ -3,7 +3,7 @@
 namespace DtoGenerator;
 
 [DtoClassGeneration(Name = "DomainPerson")]
-[DtoExtensionsClassGeneration]
+[DtoExtensionsClassGeneration(GenerationBehavior = GenerationBehavior.NoGeneration)]
 public class Person
 {
     public int Id { get; set; }

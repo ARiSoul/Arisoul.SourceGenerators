@@ -1,0 +1,16 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: AS002,
+      Title: Abstract class,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (4,0)-(13,1),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: The class 'Person' is an abstract class and cannot be used in the DTO Generation.,
+      Message: The class 'Person' is an abstract class and cannot be used in the DTO Generation.,
+      Category: DTO generator
+    }
+  ]
+}
