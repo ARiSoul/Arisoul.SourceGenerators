@@ -5,7 +5,7 @@ namespace Arisoul.SourceGenerators.Tests;
 
 public static class TestHelper
 {
-    public static Task Verify<T>(string source)
+    public static Task Verify<T>(string source, string snapshotsDirectory)
         where T : class, IIncrementalGenerator, new()
     {
         // Parse the provided string into a C# syntax tree
@@ -36,6 +36,6 @@ public static class TestHelper
         // Use verify to snapshot test the source generator output!
         return Verifier
             .Verify(driver)
-            .UseDirectory("Snapshots");
+            .UseDirectory(snapshotsDirectory);
     }
 }
