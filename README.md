@@ -37,7 +37,7 @@
     This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and extensions that facilitate mappings.
     <br />
     <br />
-    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues">Report Bug</a>
+    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues/new?assignees=ARiSoul&labels=bug&template=bug_report.md&title=">Report Bug</a>
     ·
     <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues">Request Feature</a>
   </p>
