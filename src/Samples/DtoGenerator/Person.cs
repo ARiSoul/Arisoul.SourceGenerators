@@ -16,4 +16,7 @@ public class Person
 
     [DtoProperty]
     public DateTime Date { get; set; }
+
+    [TargetDtoProperty<DomainPerson>]
+    public Person ChildPerson  { get; set; }
 }

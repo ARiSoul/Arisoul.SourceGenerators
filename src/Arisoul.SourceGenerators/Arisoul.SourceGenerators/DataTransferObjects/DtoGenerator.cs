@@ -15,6 +15,7 @@ public class DtoGenerator : IIncrementalGenerator
 
     internal const string DtoNamespace = "Arisoul.SourceGenerators.DataTransferObjects";
     internal const string FullyQualifiedDtoPropertyMarkerName = $"{DtoNamespace}.{nameof(DtoPropertyAttribute)}";
+    internal const string FullyQualifiedTargetDtoPropertyMarkerName = $"{DtoNamespace}.TargetDtoPropertyAttribute";
     internal const string FullyQualifiedDtoClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoClassGenerationAttribute)}";
     internal const string FullyQualifiedDtoExtensionsClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoExtensionsClassGenerationAttribute)}";
     internal const string DTO = "dto";
@@ -74,7 +75,9 @@ public class DtoGenerator : IIncrementalGenerator
             foreach (var attribute in propertySymbol.GetAttributes())
             {
                 // is this the attribute?
-                if (attribute.AttributeClass == null || !FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.ToString()))
+                if (attribute.AttributeClass == null 
+                    || (!FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)
+                    && !FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
                     continue;
 
                 // attribute found in at least one property, return the class
@@ -325,7 +328,9 @@ public class DtoGenerator : IIncrementalGenerator
         foreach (var attribute in propertySymbol.GetAttributes())
         {
             // is this the attribute?
-            if (attribute.AttributeClass == null || !FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.ToString()))
+            if (attribute.AttributeClass == null 
+                || (!FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)
+                && !FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
                 continue;
 
             // this is the attribute, go on
@@ -333,9 +338,20 @@ public class DtoGenerator : IIncrementalGenerator
             if (string.IsNullOrWhiteSpace(dtoPropertyName))
                 dtoPropertyName = propertySymbol.Name;
 
-            var propertyType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            var targetType = sourceType;
 
-            var propInfo = new DtoGeneratorPropertyInfo(propertySymbol.Name, dtoPropertyName!, propertyType);
+            // in case is the TargetDtoProperty, the target type must be the one received in generic
+            // TODO: TargetDtoPropertyAttribute contains DtoPropertyAttribute. Rethink this...
+            // TODO: detect if a property is not a primitive (namespace does not starts with System), to allow instantiation. Consider Collections and Enums.
+            // TODO: Allowing this, the Extensions class complicates a lot, having to cast to the correct type. Think about this too
+            if (FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name))
+            {
+                var target = attribute.AttributeClass.TypeArguments[0];
+                sourceType = target.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            }
+
+            var propInfo = new DtoGeneratorPropertyInfo(propertySymbol.Name, dtoPropertyName!, sourceType, targetType);
 
             propsToGenerate.Add(propInfo);
             break;
@@ -413,7 +429,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
 
         foreach (var prop in classInfo.Properties)
             sb.Append(@$"
-        {PropertyWriter.WritePublicPropertySimple(prop.Type, prop.DtoName)}");
+        {PropertyWriter.WritePublicPropertySimple(prop.TargetType, prop.TargetName)}");
 
         sb.Append(@"
     }
@@ -463,7 +479,7 @@ namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 
             foreach (var prop in classInfo.Properties)
                 sb.Append(@$"
-            {PropertyWriter.WritePropertyAttribution($"{DTO}.{prop.DtoName}", $"{POCO}.{prop.PocoName}")}");
+            {PropertyWriter.WritePropertyAttribution($"{DTO}.{prop.TargetName}", $"{POCO}.{prop.SourceName}")}");
 
             sb.Append($@"
 
@@ -480,7 +496,7 @@ namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 
             foreach (var prop in classInfo.Properties)
                 sb.Append(@$"
-            {POCO}.{prop.PocoName} = {DTO}.{prop.DtoName};");
+            {POCO}.{prop.SourceName} = {DTO}.{prop.TargetName};");
 
             sb.Append($@"
         }}
@@ -497,7 +513,7 @@ namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 
             foreach (var prop in classInfo.Properties)
                 sb.Append(@$"
-            {POCO}.{prop.PocoName} = {DTO}.{prop.DtoName};");
+            {POCO}.{prop.SourceName} = {DTO}.{prop.TargetName};");
 
             sb.Append(@$"
 
@@ -514,7 +530,7 @@ namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 
             foreach (var prop in classInfo.Properties)
                 sb.Append(@$"
-            {DTO}.{prop.DtoName} = {POCO}.{prop.PocoName};");
+            {DTO}.{prop.TargetName} = {POCO}.{prop.SourceName};");
 
             sb.Append(@$"
         }}

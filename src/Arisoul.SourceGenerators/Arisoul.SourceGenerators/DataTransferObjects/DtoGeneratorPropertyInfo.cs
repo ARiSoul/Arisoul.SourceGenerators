@@ -2,14 +2,16 @@
 
 public class DtoGeneratorPropertyInfo
 {
-    public string PocoName { get; set; }
-    public string DtoName { get; set; }
-    public string Type { get; }
+    public string SourceName { get; set; }
+    public string TargetName { get; set; }
+    public string SourceType { get; }
+    public string TargetType { get; }
 
-    public DtoGeneratorPropertyInfo(string pocoName, string dtoName, string type)
+    public DtoGeneratorPropertyInfo(string sourceName, string targetName, string sourceType, string targetType)
     {
-        PocoName = pocoName;
-        DtoName = dtoName;
-        Type = type;
+        SourceName = sourceName;
+        TargetName = targetName;
+        SourceType = sourceType;
+        TargetType = targetType;
     }
 }

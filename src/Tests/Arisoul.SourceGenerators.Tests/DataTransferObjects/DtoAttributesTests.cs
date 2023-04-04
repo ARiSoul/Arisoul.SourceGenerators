@@ -1,5 +1,4 @@
-﻿using Xunit;
-namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
+﻿namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
 
 public class DtoAttributesTests
 {
