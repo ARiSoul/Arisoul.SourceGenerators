@@ -102,6 +102,8 @@ public class Person
 
 - [Release](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.1)
 
+<p align="right">(<a href="#changelog-top">back to top</a>)</p>
+
 # v1.0.0 (29/03/2023)
 
 - This was the first release
@@ -109,3 +111,7 @@ public class Person
 - Add `using Arisoul.SourceGenerators.DataTransferObjects;` to the top of your class
 - Decorate the properties you want to be considered in generation with the attribute `[DtoProperty]`
 - Or to costumize the name of the property generated use `[DtoProperty("CustomName")]` or `[DtoProperty(Name = "CustomName")]`
+
+- [Release](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.0)
+
+<p align="right">(<a href="#changelog-top">back to top</a>)</p>
