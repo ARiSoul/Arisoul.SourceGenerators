@@ -4,6 +4,15 @@
 
 Here you can find the release notes of each version of the project from more recent to older ones. 
 
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Version table</summary>
+  <ul>
+    <li><a href="#v1.0.1">v1.0.1-(03/04/2023)</a></li>
+    <li><a href="#v1.0.0">v1.0.0-(29/03/2023)</a></li>
+  </ul>
+</details>
+
 # v1.0.1 (03/04/2023)
 
 ## Features
