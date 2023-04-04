@@ -8,12 +8,14 @@ Here you can find the release notes of each version of the project from more rec
 <details>
   <summary>Version table</summary>
   <ul>
-    <li>[v1.0.1](#v1.0.1 (03/04/2023))</li>
-    <li><a href="#v1.0.0 (29/03/2023)">v1.0.0 (29/03/2023)</a></li>
+    <li><a href="#v1.0.1">v1.0.1 (03/04/2023)</a></li>
+    <li><a href="#v1.0.0">v1.0.0 (29/03/2023)</a></li>
   </ul>
 </details>
 
-# v1.0.1 (03/04/2023)
+# v1.0.1
+
+Release date - 03/04/2023
 
 ## Features
 - #2 Allow to set generated classes names by @ARiSoul in #9
@@ -113,7 +115,9 @@ public class Person
 
 <p align="right">(<a href="#changelog-top">back to top</a>)</p>
 
-# v1.0.0 (29/03/2023)
+# v1.0.0
+
+Release date - 29/03/2023
 
 - This was the first release
 - Added a single attribute to allow classes generation: `DtoPropertyAttribute`
