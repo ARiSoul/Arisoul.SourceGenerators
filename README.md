@@ -31,15 +31,17 @@
     <img src="img/Arisoul_Triangle_Fill_128x128.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Arisoul Source Generators (under construction)</h3>
+<h3 align="center">Arisoul Source Generators</h3>
 
   <p align="center">
-    This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and extensions that facilitate mappings.
+    This is a simple source generator for .Net C#, created with personal purposes, but it may grow as needed. For now, the only available generators are for DTO generation, and corresponding extensions that facilitate mappings.
     <br />
     <br />
     <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues/new?assignees=ARiSoul&labels=bug&template=bug_report.md&title=">Report Bug</a>
     ·
-    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues">Request Feature</a>
+    <a href="https://github.com/ARiSoul/Arisoul.SourceGenerators/issues/new?assignees=ARiSoul&labels=enhancement&template=feature_request.md&title=">Request Feature</a>
+    <br />
+    <a href="#release-notes">Release Notes</a>
   </p>
 
 [![NuGet](https://img.shields.io/nuget/v/Arisoul.SourceGenerators)](https://www.nuget.org/packages/Arisoul.SourceGenerators/)
