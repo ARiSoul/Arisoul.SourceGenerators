@@ -12,9 +12,9 @@ namespace GeneratorDebugConsumer
 {
     public static class PersonExtensions
     {
-        public static PersonDto ToDto(this Person poco)
+        public static GeneratorDebugConsumer.PersonDto ToDto(this Person poco)
         {
-            PersonDto dto = new PersonDto();
+            GeneratorDebugConsumer.PersonDto dto = new GeneratorDebugConsumer.PersonDto();
 
             dto.Name = poco.Name;
             dto.Description = poco.Description;
@@ -22,13 +22,13 @@ namespace GeneratorDebugConsumer
             return dto;
         }
 
-        public static void FromDto(this Person poco, PersonDto dto)
+        public static void FromDto(this Person poco, GeneratorDebugConsumer.PersonDto dto)
         {
             poco.Name = dto.Name;
             poco.Description = dto.Description;
         }
 
-        public static Person ToPoco(this PersonDto dto)
+        public static Person ToPoco(this GeneratorDebugConsumer.PersonDto dto)
         {
             Person poco = new Person();
 
@@ -38,7 +38,7 @@ namespace GeneratorDebugConsumer
             return poco;
         }
 
-        public static void FromPoco(this PersonDto dto, Person poco)
+        public static void FromPoco(this GeneratorDebugConsumer.PersonDto dto, Person poco)
         {
             dto.Name = poco.Name;
             dto.Description = poco.Description;

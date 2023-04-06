@@ -7,30 +7,37 @@
     </auto-generated> ------------------------------------------------------------------------------*/
 
 using System;
-using MyNamespace;
 
 namespace DtoGenerator
 {
     public static class PersonExtensions
     {
-        public static MyNamespace.PersonCustom ToDto(this Person poco)
+        public static DtoGenerator.PersonDto ToDto(this Person poco)
         {
-            MyNamespace.PersonCustom dto = new MyNamespace.PersonCustom();
+            DtoGenerator.PersonDto dto = new DtoGenerator.PersonDto();
 
-            dto.TestAgain = poco.FirstName;
-            dto.LastName = poco.LastName;
+            dto.People = poco.People;
 
             return dto;
         }
 
-        public static Person ToPoco(this MyNamespace.PersonCustom dto)
+        public static void FromDto(this Person poco, DtoGenerator.PersonDto dto)
+        {
+            poco.People = dto.People;
+        }
+
+        public static Person ToPoco(this DtoGenerator.PersonDto dto)
         {
             Person poco = new Person();
 
-            poco.FirstName = dto.TestAgain;
-            poco.LastName = dto.LastName;
+            poco.People = dto.People;
 
             return poco;
+        }
+
+        public static void FromPoco(this DtoGenerator.PersonDto dto, Person poco)
+        {
+            dto.People = poco.People;
         }
     }
 }

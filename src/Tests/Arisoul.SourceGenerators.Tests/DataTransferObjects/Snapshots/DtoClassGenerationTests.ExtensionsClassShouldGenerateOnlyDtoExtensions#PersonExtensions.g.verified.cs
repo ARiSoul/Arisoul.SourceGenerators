@@ -13,7 +13,7 @@ namespace DtoGenerator
 {
     public static class PersonExtensions
     {
-        public static Person ToPoco(this PersonCustom dto)
+        public static Person ToPoco(this MyNamespace.PersonCustom dto)
         {
             Person poco = new Person();
 
@@ -23,7 +23,7 @@ namespace DtoGenerator
             return poco;
         }
 
-        public static void FromPoco(this PersonCustom dto, Person poco)
+        public static void FromPoco(this MyNamespace.PersonCustom dto, Person poco)
         {
             dto.TestAgain = poco.FirstName;
             dto.LastName = poco.LastName;

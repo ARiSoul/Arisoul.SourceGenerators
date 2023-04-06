@@ -1,4 +1,5 @@
 ﻿using Arisoul.SourceGenerators.DataTransferObjects;
+using System.Collections.ObjectModel;
 
 namespace DtoGenerator;
 
@@ -17,11 +18,23 @@ public class Person
     [DtoProperty]
     public DateTime Date { get; set; }
 
-    [DtoChildProperty<Domain.Person>]
-    public Person ChildPerson  { get; set; }
+    [DtoProperty]
+    public ICollection<Person> PeopleICollection { get; set; }
 
-    [DtoChildProperty<List<Domain.Person>>]
-    public ICollection<Person> People { get; set; }
+    [DtoProperty]
+    public Collection<Person> PeopleCollection { get; set; }
+
+    [DtoProperty]
+    public IList<Person> PeopleIList { get; set; }
+
+    [DtoProperty]
+    public List<Person> PeopleList { get; set; }
+
+    [DtoProperty]
+    public Dictionary<string, Person> PeopleDictionary { get; set; }
+
+    [DtoProperty]
+    public IDictionary<string, Person> PeopleIDictionary { get; set; }
 
     [DtoProperty]
     public PersonEnum PersonEnum { get; set; }

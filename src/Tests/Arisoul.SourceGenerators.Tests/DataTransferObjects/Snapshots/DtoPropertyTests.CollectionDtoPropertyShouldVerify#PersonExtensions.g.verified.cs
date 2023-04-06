@@ -16,32 +16,28 @@ namespace DtoGenerator
         {
             DtoGenerator.PersonDto dto = new DtoGenerator.PersonDto();
 
-            dto.TestAgain = poco.FirstName;
-            dto.LastName = poco.LastName;
+            dto.People = poco.People;
 
             return dto;
         }
 
         public static void FromDto(this Person poco, DtoGenerator.PersonDto dto)
         {
-            poco.FirstName = dto.TestAgain;
-            poco.LastName = dto.LastName;
+            poco.People = dto.People;
         }
 
         public static Person ToPoco(this DtoGenerator.PersonDto dto)
         {
             Person poco = new Person();
 
-            poco.FirstName = dto.TestAgain;
-            poco.LastName = dto.LastName;
+            poco.People = dto.People;
 
             return poco;
         }
 
         public static void FromPoco(this DtoGenerator.PersonDto dto, Person poco)
         {
-            dto.TestAgain = poco.FirstName;
-            dto.LastName = poco.LastName;
+            dto.People = poco.People;
         }
     }
 }

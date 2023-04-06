@@ -14,7 +14,6 @@ namespace DtoGenerator
 {
     public class PersonDto
     {
-        public string TestAgain { get; set; }
-        public string LastName { get; set; }
+        public List<DtoGenerator.Person> People { get; set; }
     }
 }

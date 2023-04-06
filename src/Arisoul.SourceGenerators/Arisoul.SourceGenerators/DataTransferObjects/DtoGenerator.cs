@@ -134,7 +134,7 @@ public class DtoGenerator : IIncrementalGenerator
 
             var propsToGenerate = new List<DtoGeneratorPropertyInfo>();
 
-           bool isToContinue = PopulatePropsToGenerate(compilation, context, classDeclaration, propsToGenerate);
+            bool isToContinue = PopulatePropsToGenerate(compilation, context, classDeclaration, propsToGenerate);
 
             if (!isToContinue || propsToGenerate.Count == 0)
                 continue;
@@ -200,8 +200,8 @@ public class DtoGenerator : IIncrementalGenerator
                 continue;
 
             // must be a property
-            var propSemanticModel = compilation.GetSemanticModel(member.SyntaxTree);
-            if (propSemanticModel == null || propSemanticModel.GetDeclaredSymbol(member) is not IPropertySymbol propertySymbol)
+            var semanticModel = compilation.GetSemanticModel(member.SyntaxTree);
+            if (semanticModel == null || semanticModel.GetDeclaredSymbol(member) is not IPropertySymbol propertySymbol)
                 continue;
 
             // the property cannot be readonly
@@ -325,6 +325,9 @@ public class DtoGenerator : IIncrementalGenerator
 
     private static bool SetPropertyNameAndPopulatePropsToGenerate(List<DtoGeneratorPropertyInfo> propsToGenerate, IPropertySymbol propertySymbol, SourceProductionContext context, ClassDeclarationSyntax classSyntax, Compilation compilation)
     {
+        var semanticModel = compilation.GetSemanticModel(classSyntax.SyntaxTree);
+        var classSymbol = semanticModel.GetDeclaredSymbol(classSyntax);
+
         // loop through attributes and find the required attribute
         foreach (var attribute in propertySymbol.GetAttributes())
         {
@@ -337,8 +340,6 @@ public class DtoGenerator : IIncrementalGenerator
             // if this is a child property and ExtensionsClass.GenerationBehavior != None, diagnose unsupported generation of extensions class with property childs
             if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
             {
-                var semanticModel = compilation.GetSemanticModel(classSyntax.SyntaxTree);
-                var classSymbol = semanticModel.GetDeclaredSymbol(classSyntax);
                 var attributeSymbol = classSymbol!.GetAttributes().FirstOrDefault(a => FullyQualifiedDtoExtensionsClassGenerationMarkerName.Contains(a.AttributeClass!.Name));
 
                 bool notSupported = attributeSymbol == null;
@@ -370,12 +371,25 @@ public class DtoGenerator : IIncrementalGenerator
             if (string.IsNullOrWhiteSpace(dtoPropertyName))
                 dtoPropertyName = propertySymbol.Name;
 
+            var collectionTypeArguments = new List<CollectionTypeArgument>();
+            var typeSymbol = semanticModel.GetTypeInfo(((PropertyDeclarationSyntax)propertySymbol.DeclaringSyntaxReferences[0].GetSyntax()).Type).Type;
+
+            // Manage collections, so the argument types belong to the correct namespace and don't conflict in Extensions class
+            if (typeSymbol.IsCollection(semanticModel) && propertySymbol.Type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType)
+                // if is a dictionary, for example, will have more that one type argument
+                foreach (var argument in namedTypeSymbol.TypeArguments)
+                    collectionTypeArguments.Add(new()
+                    {
+                        CollectionName = propertySymbol.Type.Name,
+                        SourceNamespace = argument.ContainingNamespace.ToString(),
+                        Name = argument.Name,
+                    });
+
             var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
             var targetType = sourceType;
             bool isChildProperty = false;
 
             // in case is the TargetDtoProperty, the target type must be the one received in generic
-            // TODO: enums and collections
             if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
             {
                 var target = attribute.AttributeClass.TypeArguments[0];
@@ -383,7 +397,13 @@ public class DtoGenerator : IIncrementalGenerator
                 isChildProperty = true;
             }
 
-            var propInfo = new DtoGeneratorPropertyInfo(propertySymbol.Name, dtoPropertyName!, sourceType, targetType, isChildProperty);
+            var propInfo = new DtoGeneratorPropertyInfo(
+                propertySymbol.Name,
+                dtoPropertyName!,
+                sourceType,
+                targetType,
+                isChildProperty,
+                collectionTypeArguments);
 
             propsToGenerate.Add(propInfo);
             break;
@@ -455,6 +475,8 @@ public class DtoGenerator : IIncrementalGenerator
         sb.Append(@$"{ClassWriter.WriteClassHeader(true)}
 
 {ClassWriter.WriteUsing("System")}
+{ClassWriter.WriteUsing("System.Collections.Generic")}
+{ClassWriter.WriteUsing("System.Collections.ObjectModel")}
 
 namespace {classInfo.DtoClassGenerationInfo.Namespace}
 {{
@@ -462,8 +484,32 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
     {{");
 
         foreach (var prop in classInfo.Properties)
+        {
+            string targetType = prop.TargetType;
+            if (prop.CollectionTypeArguments.Any())
+            {
+                // in this case, it is a collection, and to avoid cases where the class name is the same in different namespaces,
+                // where extensions generation will raise an error because it cannot convert a collection of a class in a namespace, to another
+                // it is required to set the type arguments types with full original namespace
+
+                StringBuilder targetTypeSb = new StringBuilder();
+                foreach (var arg in prop.CollectionTypeArguments)
+                {
+                    if (targetTypeSb.Length == 0)
+                        targetTypeSb.Append($"{arg.CollectionName}<");
+                    else
+                        targetTypeSb.Append(", ");
+
+                    targetTypeSb.Append(arg);
+                }
+
+                targetTypeSb.Append(">");
+                targetType = targetTypeSb.ToString();
+            }
+
             sb.Append(@$"
-        {PropertyWriter.WritePublicPropertySimple(prop.TargetType, prop.TargetName)}");
+        {PropertyWriter.WritePublicPropertySimple(targetType, prop.TargetName)}");
+        }
 
         sb.Append(@"
     }

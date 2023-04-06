@@ -12,21 +12,21 @@ namespace DtoGenerator
 {
     public static class PersonExtensions
     {
-        public static PersonDto ToDto(this Person poco)
+        public static DtoGenerator.PersonDto ToDto(this Person poco)
         {
-            PersonDto dto = new PersonDto();
+            DtoGenerator.PersonDto dto = new DtoGenerator.PersonDto();
 
             dto.LastName = poco.LastName;
 
             return dto;
         }
 
-        public static void FromDto(this Person poco, PersonDto dto)
+        public static void FromDto(this Person poco, DtoGenerator.PersonDto dto)
         {
             poco.LastName = dto.LastName;
         }
 
-        public static Person ToPoco(this PersonDto dto)
+        public static Person ToPoco(this DtoGenerator.PersonDto dto)
         {
             Person poco = new Person();
 
@@ -35,7 +35,7 @@ namespace DtoGenerator
             return poco;
         }
 
-        public static void FromPoco(this PersonDto dto, Person poco)
+        public static void FromPoco(this DtoGenerator.PersonDto dto, Person poco)
         {
             dto.LastName = poco.LastName;
         }
