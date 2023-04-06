@@ -29,4 +29,17 @@ public class DTODiagnostics
 
         return Diagnostic.Create(descriptor, syntax.GetLocation());
     }
+
+    public static Diagnostic UnsupportedExtensionsClassGenerationWithChildPropertyDiagnostic(string className, MemberDeclarationSyntax syntax)
+    {
+        var descriptor = new DiagnosticDescriptor(
+            id: DC.UnsupportedExtensionsClassGenerationWithChildProperty.ID,
+            title: DC.UnsupportedExtensionsClassGenerationWithChildProperty.Title,
+            messageFormat: string.Format(DC.UnsupportedExtensionsClassGenerationWithChildProperty.Description, className),
+            category: DC.UnsupportedExtensionsClassGenerationWithChildProperty.Category,
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        return Diagnostic.Create(descriptor, syntax.GetLocation());
+    }
 }

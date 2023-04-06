@@ -1,0 +1,16 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: AS003,
+      Title: Unsupported feature,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,4)-(17,5),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: Extensions class generation does not support child properties. Set DtoExtensionsClassGenerationAttribute with GenerationBehavior to NoGeneration. You still can use the DtoGenerator in the class 'Person', but the mapping should be managed in a different way, or using an existing mapper tool. Maybe this feature will be available in the future.,
+      Message: Extensions class generation does not support child properties. Set DtoExtensionsClassGenerationAttribute with GenerationBehavior to NoGeneration. You still can use the DtoGenerator in the class 'Person', but the mapping should be managed in a different way, or using an existing mapper tool. Maybe this feature will be available in the future.,
+      Category: DTO generator
+    }
+  ]
+}

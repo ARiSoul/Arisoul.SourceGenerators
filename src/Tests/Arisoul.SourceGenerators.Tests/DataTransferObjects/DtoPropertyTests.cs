@@ -3,10 +3,10 @@
 namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
 
 [UsesVerify]
-public class DtoGeneratorTests : BaseDtoTestClass
+public class DtoPropertyTests : BaseDtoTestClass
 {
     [Fact]
-    public Task DtoPropertyWithNoNameShouldVerify()
+    public Task WithNoNameShouldVerify()
     {
         var code = @"
 using Arisoul.SourceGenerators.DataTransferObjects;
@@ -29,7 +29,7 @@ namespace GeneratorDebugConsumer
     }
 
     [Fact]
-    public Task DtoPropertyWithNameShouldVerify()
+    public Task WithNameShouldVerify()
     {
         var code = @"
 using Arisoul.SourceGenerators.DataTransferObjects;
@@ -52,7 +52,7 @@ namespace GeneratorDebugConsumer
     }
 
     [Fact]
-    public Task DtoPropertyWithNamedArgumentsShouldVerify()
+    public Task WithNamedArgumentsShouldVerify()
     {
         var code = @"
 using Arisoul.SourceGenerators.DataTransferObjects;
@@ -75,7 +75,7 @@ namespace GeneratorDebugConsumer
     }
 
     [Fact]
-    public Task DtoPropertyClassWithFileScopedNamespaceShouldVerify()
+    public Task SourceClassWithFileScopedNamespaceShouldVerify()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
 
@@ -96,7 +96,7 @@ public class Person
     }
 
     [Fact]
-    public Task DtoPropertyCannotBeReadonly()
+    public Task CannotBeReadonly()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
 
@@ -117,7 +117,7 @@ public class Person
     }
 
     [Fact]
-    public Task DtoPropertyAbstractClassShouldNotBeGenerated()
+    public Task AbstractClassShouldNotBeGenerated()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
 

@@ -38,25 +38,26 @@ public class DtoPropertyAttribute
 /// </summary>
 /// <seealso cref="Attribute" />
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-public class TargetDtoPropertyAttribute<T>
+public class DtoChildPropertyAttribute<T>
     : DtoPropertyAttribute
+    where T : class, new()
 {
 
     public T? TargetType { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TargetDtoPropertyAttribute{T}"/> class.
+    /// Initializes a new instance of the <see cref="DtoChildPropertyAttribute{T}"/> class.
     /// </summary>
-    public TargetDtoPropertyAttribute()
+    public DtoChildPropertyAttribute()
         : base()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TargetDtoPropertyAttribute{T}"/> class.
+    /// Initializes a new instance of the <see cref="DtoChildPropertyAttribute{T}"/> class.
     /// </summary>
     /// <param name="name">The generated property name.</param>
-    public TargetDtoPropertyAttribute(string name)
+    public DtoChildPropertyAttribute(string name)
         : base(name) 
     {
     }

@@ -15,7 +15,7 @@ public class DtoGenerator : IIncrementalGenerator
 
     internal const string DtoNamespace = "Arisoul.SourceGenerators.DataTransferObjects";
     internal const string FullyQualifiedDtoPropertyMarkerName = $"{DtoNamespace}.{nameof(DtoPropertyAttribute)}";
-    internal const string FullyQualifiedTargetDtoPropertyMarkerName = $"{DtoNamespace}.TargetDtoPropertyAttribute";
+    internal const string FullyQualifiedDtoChildPropertyMarkerName = $"{DtoNamespace}.DtoChildPropertyAttribute";
     internal const string FullyQualifiedDtoClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoClassGenerationAttribute)}";
     internal const string FullyQualifiedDtoExtensionsClassGenerationMarkerName = $"{DtoNamespace}.{nameof(DtoExtensionsClassGenerationAttribute)}";
     internal const string DTO = "dto";
@@ -57,8 +57,6 @@ public class DtoGenerator : IIncrementalGenerator
 
         var classSyntax = (ClassDeclarationSyntax)context.Node;
 
-
-
         // loop through all the class members
         foreach (var member in classSyntax!.Members)
         {
@@ -75,9 +73,9 @@ public class DtoGenerator : IIncrementalGenerator
             foreach (var attribute in propertySymbol.GetAttributes())
             {
                 // is this the attribute?
-                if (attribute.AttributeClass == null 
+                if (attribute.AttributeClass == null
                     || (!FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)
-                    && !FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
+                    && !FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
                     continue;
 
                 // attribute found in at least one property, return the class
@@ -136,9 +134,9 @@ public class DtoGenerator : IIncrementalGenerator
 
             var propsToGenerate = new List<DtoGeneratorPropertyInfo>();
 
-            PopulatePropsToGenerate(compilation, context, classDeclaration, propsToGenerate);
+           bool isToContinue = PopulatePropsToGenerate(compilation, context, classDeclaration, propsToGenerate);
 
-            if (propsToGenerate.Count == 0)
+            if (!isToContinue || propsToGenerate.Count == 0)
                 continue;
 
             var sourceNamespace = classDeclaration.GetNamespace();
@@ -192,7 +190,7 @@ public class DtoGenerator : IIncrementalGenerator
         return classIsAbstract;
     }
 
-    private static void PopulatePropsToGenerate(Compilation compilation, SourceProductionContext context, ClassDeclarationSyntax classDeclaration, List<DtoGeneratorPropertyInfo> propsToGenerate)
+    private static bool PopulatePropsToGenerate(Compilation compilation, SourceProductionContext context, ClassDeclarationSyntax classDeclaration, List<DtoGeneratorPropertyInfo> propsToGenerate)
     {
         // loop through all class members
         foreach (var member in classDeclaration.Members)
@@ -213,8 +211,11 @@ public class DtoGenerator : IIncrementalGenerator
                 continue;
             }
 
-            SetPropertyNameAndPopulatePropsToGenerate(propsToGenerate, propertySymbol);
+            if (!SetPropertyNameAndPopulatePropsToGenerate(propsToGenerate, propertySymbol, context, classDeclaration, compilation))
+                return false;
         }
+
+        return true;
     }
 
     private static void SetClassGenerationInfoPropertiesFromClassAttribute(DtoGeneratorClassInfo dtoGeneratorClassInfo, string[] classExpectedAttributes, AttributeData attribute)
@@ -322,16 +323,47 @@ public class DtoGenerator : IIncrementalGenerator
         return dtoGeneratorClassInfo;
     }
 
-    private static void SetPropertyNameAndPopulatePropsToGenerate(List<DtoGeneratorPropertyInfo> propsToGenerate, IPropertySymbol propertySymbol)
+    private static bool SetPropertyNameAndPopulatePropsToGenerate(List<DtoGeneratorPropertyInfo> propsToGenerate, IPropertySymbol propertySymbol, SourceProductionContext context, ClassDeclarationSyntax classSyntax, Compilation compilation)
     {
         // loop through attributes and find the required attribute
         foreach (var attribute in propertySymbol.GetAttributes())
         {
             // is this the attribute?
-            if (attribute.AttributeClass == null 
+            if (attribute.AttributeClass == null
                 || (!FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)
-                && !FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
+                && !FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
                 continue;
+
+            // if this is a child property and ExtensionsClass.GenerationBehavior != None, diagnose unsupported generation of extensions class with property childs
+            if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
+            {
+                var semanticModel = compilation.GetSemanticModel(classSyntax.SyntaxTree);
+                var classSymbol = semanticModel.GetDeclaredSymbol(classSyntax);
+                var attributeSymbol = classSymbol!.GetAttributes().FirstOrDefault(a => FullyQualifiedDtoExtensionsClassGenerationMarkerName.Contains(a.AttributeClass!.Name));
+
+                bool notSupported = attributeSymbol == null;
+
+                if (!notSupported)
+                {
+                    // Find the specific argument by name
+                    var targetArgumentName = nameof(DtoExtensionsClassGenerationAttribute.GenerationBehavior);
+                    var argumentValue = attributeSymbol!.NamedArguments
+                        .Where(namedArg => namedArg.Key == targetArgumentName)
+                        .Select(namedArg => namedArg.Value.Value)
+                        .FirstOrDefault();
+
+                    notSupported = argumentValue == null;
+
+                    if (!notSupported)
+                        notSupported = ((GenerationBehavior)argumentValue!) != GenerationBehavior.NoGeneration;
+                }
+
+                if (notSupported)
+                {
+                    context.ReportDiagnostic(DTODiagnostics.UnsupportedExtensionsClassGenerationWithChildPropertyDiagnostic(classSyntax.Identifier.ToString(), classSyntax));
+                    return false;
+                }
+            }
 
             // this is the attribute, go on
             string? dtoPropertyName = GetPropertyNameFromDtoAttribute(attribute);
@@ -340,22 +372,24 @@ public class DtoGenerator : IIncrementalGenerator
 
             var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
             var targetType = sourceType;
+            bool isChildProperty = false;
 
             // in case is the TargetDtoProperty, the target type must be the one received in generic
-            // TODO: TargetDtoPropertyAttribute contains DtoPropertyAttribute. Rethink this...
-            // TODO: detect if a property is not a primitive (namespace does not starts with System), to allow instantiation. Consider Collections and Enums.
-            // TODO: Allowing this, the Extensions class complicates a lot, having to cast to the correct type. Think about this too
-            if (FullyQualifiedTargetDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name))
+            // TODO: enums and collections
+            if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
             {
                 var target = attribute.AttributeClass.TypeArguments[0];
-                sourceType = target.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                targetType = target.ToDisplayString();
+                isChildProperty = true;
             }
 
-            var propInfo = new DtoGeneratorPropertyInfo(propertySymbol.Name, dtoPropertyName!, sourceType, targetType);
+            var propInfo = new DtoGeneratorPropertyInfo(propertySymbol.Name, dtoPropertyName!, sourceType, targetType, isChildProperty);
 
             propsToGenerate.Add(propInfo);
             break;
         }
+
+        return true;
     }
 
     private static string GetPropertyNameFromDtoAttribute(AttributeData attribute)
@@ -442,7 +476,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
     {
         string pocoCapitalized = POCO.Capitalize()!;
         string dtoCapitalized = DTO.Capitalize()!;
-        string dtoClassName = classInfo.DtoClassGenerationInfo.Name;
+        string dtoClassName = classInfo.DtoClassGenerationInfo.FullyQualifiedName;
         string extensionsClassName = classInfo.ExtensionsClassGenerationInfo.Name;
 
         var sb = new StringBuilder();

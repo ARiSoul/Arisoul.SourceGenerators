@@ -6,12 +6,14 @@ public class DtoGeneratorPropertyInfo
     public string TargetName { get; set; }
     public string SourceType { get; }
     public string TargetType { get; }
+    public bool IsChildProperty { get; set; }
 
-    public DtoGeneratorPropertyInfo(string sourceName, string targetName, string sourceType, string targetType)
+    public DtoGeneratorPropertyInfo(string sourceName, string targetName, string sourceType, string targetType, bool isChildProperty)
     {
         SourceName = sourceName;
         TargetName = targetName;
         SourceType = sourceType;
         TargetType = targetType;
+        IsChildProperty = isChildProperty;
     }
 }
