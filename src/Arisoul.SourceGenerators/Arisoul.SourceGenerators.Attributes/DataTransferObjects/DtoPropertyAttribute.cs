@@ -5,7 +5,8 @@
 /// </summary>
 /// <seealso cref="Attribute" />
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-public class DtoPropertyAttribute : Attribute
+public class DtoPropertyAttribute
+    : Attribute
 {
     /// <summary>
     /// Gets or sets the generated property name.

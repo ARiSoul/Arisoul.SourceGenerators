@@ -7,11 +7,14 @@
     </auto-generated> ------------------------------------------------------------------------------*/
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace DtoGenerator
 {
     public class PersonDto
     {
+        public string TestAgain { get; set; }
         public string LastName { get; set; }
     }
 }

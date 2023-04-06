@@ -14,9 +14,9 @@ namespace ExtensionsNamespace
 {
     public static class PersonExtensions
     {
-        public static PersonCustom ToDto(this Person poco)
+        public static MyNamespace.PersonCustom ToDto(this Person poco)
         {
-            PersonCustom dto = new PersonCustom();
+            MyNamespace.PersonCustom dto = new MyNamespace.PersonCustom();
 
             dto.TestAgain = poco.FirstName;
             dto.LastName = poco.LastName;
@@ -24,13 +24,13 @@ namespace ExtensionsNamespace
             return dto;
         }
 
-        public static void FromDto(this Person poco, PersonCustom dto)
+        public static void FromDto(this Person poco, MyNamespace.PersonCustom dto)
         {
             poco.FirstName = dto.TestAgain;
             poco.LastName = dto.LastName;
         }
 
-        public static Person ToPoco(this PersonCustom dto)
+        public static Person ToPoco(this MyNamespace.PersonCustom dto)
         {
             Person poco = new Person();
 
@@ -40,7 +40,7 @@ namespace ExtensionsNamespace
             return poco;
         }
 
-        public static void FromPoco(this PersonCustom dto, Person poco)
+        public static void FromPoco(this MyNamespace.PersonCustom dto, Person poco)
         {
             dto.TestAgain = poco.FirstName;
             dto.LastName = poco.LastName;

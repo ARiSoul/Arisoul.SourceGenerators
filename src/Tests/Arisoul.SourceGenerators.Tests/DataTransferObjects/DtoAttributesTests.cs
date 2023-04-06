@@ -1,5 +1,4 @@
-﻿using Xunit;
-namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
+﻿namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
 
 public class DtoAttributesTests
 {
@@ -28,6 +27,33 @@ public class DtoAttributesTests
         Assert.NotNull(dto);
     }
 
+    [Fact]
+    public void TestDtoChildPropertyAttributeParametlessConstructor()
+    {
+        // Arrange
+        DtoChildPropertyAttribute<DtoChildProperty> dto = new()
+        {
+            Name = "Name"
+        };
+
+        // Act
+        // Assert
+        Assert.NotNull(dto);
+        Assert.NotNull(dto.TargetType);
+    }
+
+    [Fact]
+    public void TestDtoChildPropertyAttributeConstructorArgs()
+    {
+        // Arrange
+        DtoChildPropertyAttribute<DtoChildProperty> dto = new("Name");
+        
+        // Act
+        // Assert
+        Assert.NotNull(dto);
+        Assert.NotNull(dto.TargetType);
+    }
+
 
     [Fact]
     public void DtoExtensionsClassGenerationShouldInitializeWithGenerationBehaviorFull()
@@ -43,5 +69,10 @@ public class DtoAttributesTests
         // Assert
         Assert.NotNull(classGenerationAttribute);
         Assert.Equal(GenerationBehavior.Full, classGenerationAttribute.GenerationBehavior);
+    }
+
+    public class DtoChildProperty
+    {
+        public string Name { get; set; }
     }
 }
