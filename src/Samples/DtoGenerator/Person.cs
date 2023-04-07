@@ -1,5 +1,6 @@
 ﻿using Arisoul.SourceGenerators.DataTransferObjects;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace DtoGenerator;
 
@@ -17,6 +18,9 @@ public class Person
 
     [DtoProperty]
     public DateTime Date { get; set; }
+
+    [DtoProperty]
+    public Person RelatedPerson { get; set; }
 
     [DtoProperty]
     public ICollection<Person> PeopleICollection { get; set; }

@@ -12,16 +12,21 @@ Here you can find the release notes of each version of the project from more rec
 
 # v1.0.2 <a id="v1.0.2"></a>
 
-Release date - 07/04/2023
+**Release date** - 07/04/2023
 
 ## Features
+
 - #5 Mapping collections
 - #6 Allow generated files persisting in disk
 - #7 Add a type converter option
 
 ### Details
 
-- Added a new attribute ```DtoChildPropertyAttribute``` that when applied to a property, it allows to define the type of the child property to generate in the Dto class. Suppose you have an entity called Person and a PersonDto. Now suppose that in your Person, you have a child property that references another Person, for example RelatedPerson. If you use the simple ```DtoPropertyAttribute```, the PersonDto will be generated also with a child property RelatedPerson of the same type from Person. Normally, we want that those child properties are also Dtos, so using the new attribute, you can say that the child property RelatedPerson in the Dto will be of type PersonDto also. Just use the attribute like this: ```DtoChildProperty<PersonDto>```, and the RelatedPerson in the PersonDto, will be of type PersonDto. See the following example:
+- Made generated classes partial so they can be extended if required
+- Made generated dto properties virtual, so they can be overrided if needed
+- Generated Dto class property types will now be in the fully qualified format, to avoid naming collisions
+- Added a new attribute ```DtoChildPropertyAttribute``` 
+    - When applied to a property, it allows to define the type of the child property to generate in the Dto class. Suppose you have an entity called **Person** and a **PersonDto**. Now suppose that in your **Person**, you have a child property that references another **Person**, for example **RelatedPerson**. If you use the simple ```DtoPropertyAttribute```, the **PersonDto** will be generated also with a child property **RelatedPerson** of the same type from **Person**. Normally, we want that those child properties are also Dtos, so using the new attribute, you can say that the child property **RelatedPerson** in the Dto will be of type **PersonDto** also. Just decorate the **RelatedPerson** in your **Person** class with the attribute like this: ```[DtoChildProperty<PersonDto>]```, and the **RelatedPerson** in the **PersonDto**, will be of type **PersonDto**. See the following example:
 
 ```
 public class Person
@@ -37,18 +42,25 @@ public class Person
     public Person RelatedPerson { get; set; }
 }
 ```
-- Will generate
+- Will generate:
 ```
-public class PersonDto
+public partial class PersonDto
 {
-    public string Name { get; set; }
+    public virtual string Name { get; set; }
 
     // other properties...
 
-    public PersonDto RelatedPerson { get; set; }
+    public virtual PersonDto RelatedPerson { get; set; }
 }
 ```
-- TODO: continue updating documentation
+
+## Bugs
+
+- Fixed a bug while generating extensions class where the class name is the same as the source class, but in different namespaces, that would cause a cast conversion error while trying to "map" one property to other
+
+## Test coverage
+- All changes were covered by unit tests
+- Coverage: **94.9%**
 
 - [Release](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.2)
 
@@ -56,7 +68,7 @@ public class PersonDto
 
 # v1.0.1 <a id="v1.0.1"></a>
 
-Release date - 03/04/2023
+**Release date** - 03/04/2023
 
 ## Features
 - #2 Allow to set generated classes names by @ARiSoul in #9
@@ -65,7 +77,10 @@ Release date - 03/04/2023
 
 ## Bugs
 - Fixed bug #8 Abstract classes should no be generated
+
+## Test coverage
 - All changes were covered by unit tests
+- Coverage: **94.9%**
 
 ### Details
 Is now possible to use the [DtoClassGenerationAttribute] and [DtoExtensionsClassGenerationAttribute] at class level, to set the desired class name to generate, as also the namespace of each one.
@@ -158,7 +173,7 @@ public class Person
 
 # v1.0.0 <a id="v1.0.0"></a>
 
-Release date - 29/03/2023
+**Release date** - 29/03/2023
 
 - This was the first release
 - Added a single attribute to allow classes generation: `DtoPropertyAttribute`
