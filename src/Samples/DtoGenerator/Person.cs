@@ -9,7 +9,7 @@ public class Person
 {
     public int Id { get; set; }
 
-    [DtoProperty("Name")]
+    [DtoProperty]
     public string FirstName { get; set; }
 
     [DtoProperty]

@@ -1,11 +1,13 @@
-﻿namespace Arisoul.SourceGenerators.DataTransferObjects;
+﻿using Arisoul.SourceGenerators.Attributes.Common;
+
+namespace Arisoul.SourceGenerators.DataTransferObjects;
 
 /// <summary>
 /// Defines a base class to be used by all classes generation attributes, with shared properties.
 /// </summary>
 /// <seealso cref="System.Attribute" />
-[AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-public abstract class BaseDtoClassGenerationAttribute : Attribute
+public abstract class BaseDtoClassGenerationAttribute 
+    : BaseClassGenerationAttribute
 {
     /// <summary>
     /// Gets or sets the class name.

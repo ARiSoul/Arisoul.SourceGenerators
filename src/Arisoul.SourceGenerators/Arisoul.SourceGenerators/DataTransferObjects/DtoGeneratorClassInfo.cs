@@ -4,6 +4,7 @@ internal class DtoGeneratorClassInfo
 {
     public string SourceClassName { get; set; }
     public string SourceNamespace { get; set; }
+    
     public DtoClassGenerationInfo DtoClassGenerationInfo { get; set; }
     public ExtensionsClassGenerationInfo ExtensionsClassGenerationInfo { get; set; }
 
