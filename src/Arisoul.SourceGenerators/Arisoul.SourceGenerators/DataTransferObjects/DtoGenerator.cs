@@ -1,9 +1,9 @@
 ﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
-using Microsoft.CodeAnalysis;
-using System;
 using System.Collections.Immutable;
 
 namespace Arisoul.SourceGenerators.DataTransferObjects;
+
+// TODO: continue updating documentation. Left in release notes for 1.0.2
 
 /// <summary>
 /// Generates Data Transfer Objects (DTOs) from classes that have properties decorated with the <see cref="DtoPropertyAttribute"/>.
