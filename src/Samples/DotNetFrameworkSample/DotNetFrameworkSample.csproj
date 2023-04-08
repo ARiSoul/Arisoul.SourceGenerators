@@ -84,7 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Arisoul.SourceGenerators\Arisoul.SourceGenerators.csproj">
+    <ProjectReference Include="..\..\Arisoul.SourceGenerators\Arisoul.SourceGenerators\Arisoul.SourceGenerators.csproj">
       <Project>{51ab7f5c-0124-4412-862a-2340a445e5a0}</Project>
       <Name>Arisoul.SourceGenerators</Name>
     </ProjectReference>
