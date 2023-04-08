@@ -10,7 +10,7 @@ using System;
 
 namespace DtoGenerator
 {
-    public static class CustomPersonExtensions
+    public static partial class CustomPersonExtensions
     {
         public static DtoGenerator.PersonDto ToDto(this Person poco)
         {

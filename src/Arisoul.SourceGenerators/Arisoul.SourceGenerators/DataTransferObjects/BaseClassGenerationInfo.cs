@@ -1,4 +1,5 @@
 ﻿namespace Arisoul.SourceGenerators.DataTransferObjects;
+
 internal abstract class BaseClassGenerationInfo
 {
     public string? Name { get; set; }

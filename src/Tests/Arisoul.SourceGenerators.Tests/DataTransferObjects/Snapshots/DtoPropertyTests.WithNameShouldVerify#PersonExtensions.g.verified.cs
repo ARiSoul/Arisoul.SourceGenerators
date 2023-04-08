@@ -10,7 +10,7 @@ using System;
 
 namespace GeneratorDebugConsumer
 {
-    public static class PersonExtensions
+    public static partial class PersonExtensions
     {
         public static GeneratorDebugConsumer.PersonDto ToDto(this Person poco)
         {

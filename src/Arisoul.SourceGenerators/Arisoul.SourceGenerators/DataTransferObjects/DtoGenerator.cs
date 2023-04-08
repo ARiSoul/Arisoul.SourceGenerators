@@ -1,9 +1,10 @@
 ﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
-using Microsoft.CodeAnalysis;
-using System;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Immutable;
 
 namespace Arisoul.SourceGenerators.DataTransferObjects;
+
+// TODO: continue updating documentation. Left in release notes for 1.0.2
 
 /// <summary>
 /// Generates Data Transfer Objects (DTOs) from classes that have properties decorated with the <see cref="DtoPropertyAttribute"/>.
@@ -98,14 +99,14 @@ public class DtoGenerator : IIncrementalGenerator
         foreach (var classInfo in classInfoList)
         {
             var dtoClassFileName = $"{classInfo.DtoClassGenerationInfo.Name}.g.cs";
-            var dtoClassCode = GetDtoClassCode(classInfo);
+            var dtoClassCode = GenerateDtoClassCode(classInfo, compilation);
 
             context.AddSource(dtoClassFileName, dtoClassCode);
 
             if (classInfo.ExtensionsClassGenerationInfo.GenerationBehavior != GenerationBehavior.NoGeneration)
             {
                 var extensionsClassFileName = $"{classInfo.ExtensionsClassGenerationInfo.Name}.g.cs";
-                var extensionsClassCode = GetDtoExtensionsClassCode(classInfo);
+                var extensionsClassCode = GenerateDtoExtensionsClassCode(classInfo, compilation);
 
                 context.AddSource(extensionsClassFileName, extensionsClassCode);
             }
@@ -385,7 +386,7 @@ public class DtoGenerator : IIncrementalGenerator
                         Name = argument.Name,
                     });
 
-            var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var targetType = sourceType;
             bool isChildProperty = false;
 
@@ -393,7 +394,7 @@ public class DtoGenerator : IIncrementalGenerator
             if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
             {
                 var target = attribute.AttributeClass.TypeArguments[0];
-                targetType = target.ToDisplayString();
+                targetType = target.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 isChildProperty = true;
             }
 
@@ -469,10 +470,10 @@ public class DtoGenerator : IIncrementalGenerator
         return string.Empty;
     }
 
-    private static SourceText GetDtoClassCode(DtoGeneratorClassInfo classInfo)
+    private static SourceText GenerateDtoClassCode(DtoGeneratorClassInfo classInfo, Compilation compilation)
     {
         var sb = new StringBuilder();
-        sb.Append(@$"{ClassWriter.WriteClassHeader(true)}
+        sb.Append(@$"{ClassWriter.WriteClassHeader(((CSharpCompilation)compilation).LanguageVersion >= LanguageVersion.CSharp8)}
 
 {ClassWriter.WriteUsing("System")}
 {ClassWriter.WriteUsing("System.Collections.Generic")}
@@ -480,7 +481,7 @@ public class DtoGenerator : IIncrementalGenerator
 
 namespace {classInfo.DtoClassGenerationInfo.Namespace}
 {{
-    public class {classInfo.DtoClassGenerationInfo.Name}
+    public partial class {classInfo.DtoClassGenerationInfo.Name}
     {{");
 
         foreach (var prop in classInfo.Properties)
@@ -518,7 +519,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
         return SourceText.From(sb.ToString(), Encoding.UTF8);
     }
 
-    private static SourceText GetDtoExtensionsClassCode(DtoGeneratorClassInfo classInfo)
+    private static SourceText GenerateDtoExtensionsClassCode(DtoGeneratorClassInfo classInfo, Compilation compilation)
     {
         string pocoCapitalized = POCO.Capitalize()!;
         string dtoCapitalized = DTO.Capitalize()!;
@@ -527,7 +528,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
 
         var sb = new StringBuilder();
 
-        sb.Append($@"{ClassWriter.WriteClassHeader(true)}
+        sb.Append($@"{ClassWriter.WriteClassHeader(((CSharpCompilation)compilation).LanguageVersion >= LanguageVersion.CSharp8)}
 
 {ClassWriter.WriteUsing("System")}");
         if (!string.Equals(classInfo.DtoClassGenerationInfo.Namespace, classInfo.ExtensionsClassGenerationInfo.Namespace, StringComparison.Ordinal))
@@ -546,7 +547,7 @@ namespace {classInfo.DtoClassGenerationInfo.Namespace}
 
 namespace {classInfo.ExtensionsClassGenerationInfo.Namespace}
 {{
-    public static class {extensionsClassName}
+    public static partial class {extensionsClassName}
     {{");
 
         if (!classInfo.ExtensionsClassGenerationInfo.GenerationBehavior.In(GenerationBehavior.OnlyDto, GenerationBehavior.OnlyFromMethods))

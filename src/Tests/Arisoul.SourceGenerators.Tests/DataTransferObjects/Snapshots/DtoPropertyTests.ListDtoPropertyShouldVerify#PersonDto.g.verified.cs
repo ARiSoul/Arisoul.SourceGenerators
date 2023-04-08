@@ -12,8 +12,8 @@ using System.Collections.ObjectModel;
 
 namespace DtoGenerator
 {
-    public class PersonDto
+    public partial class PersonDto
     {
-        public List<DtoGenerator.Person> People { get; set; }
+        public virtual List<DtoGenerator.Person> People { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using MyNamespace;
 
 namespace DtoGenerator
 {
-    public static class PersonExtensions
+    public static partial class PersonExtensions
     {
         public static Person ToPoco(this MyNamespace.PersonCustom dto)
         {

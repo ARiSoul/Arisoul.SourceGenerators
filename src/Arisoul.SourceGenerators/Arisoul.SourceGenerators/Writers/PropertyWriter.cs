@@ -3,7 +3,7 @@
 internal static partial class PropertyWriter
 {
     internal static string WritePublicPropertySimple(string type, string name, string modifier = "public", int tabsCount = 0) 
-        => $"{GetTabs(tabsCount)}{modifier} {type} {name} {{ get; set; }}";
+        => $"{GetTabs(tabsCount)}{modifier} virtual {type} {name} {{ get; set; }}";
 
     internal static string WritePropertyAttribution(string left, string right, int tabsCount = 0) 
         => $"{GetTabs(tabsCount)}{left} = {right};";
