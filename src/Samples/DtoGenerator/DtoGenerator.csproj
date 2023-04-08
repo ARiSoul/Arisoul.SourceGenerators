@@ -28,7 +28,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	 <!--👇 Exclude everything in the base folder--> 
+		<!-- Exclude everything in the base folder--> 
 		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
 	</ItemGroup>
 	

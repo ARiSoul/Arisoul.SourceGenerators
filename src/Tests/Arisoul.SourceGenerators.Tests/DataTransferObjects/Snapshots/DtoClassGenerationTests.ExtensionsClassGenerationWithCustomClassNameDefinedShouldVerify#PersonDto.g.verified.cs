@@ -12,9 +12,9 @@ using System.Collections.ObjectModel;
 
 namespace DtoGenerator
 {
-    public class PersonDto
+    public partial class PersonDto
     {
-        public string TestAgain { get; set; }
-        public string LastName { get; set; }
+        public virtual string TestAgain { get; set; }
+        public virtual string LastName { get; set; }
     }
 }

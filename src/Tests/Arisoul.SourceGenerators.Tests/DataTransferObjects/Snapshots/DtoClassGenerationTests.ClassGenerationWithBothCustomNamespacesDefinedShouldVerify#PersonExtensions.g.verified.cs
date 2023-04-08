@@ -12,7 +12,7 @@ using DtoGenerator;
 
 namespace ExtensionsNamespace
 {
-    public static class PersonExtensions
+    public static partial class PersonExtensions
     {
         public static MyNamespace.PersonCustom ToDto(this Person poco)
         {

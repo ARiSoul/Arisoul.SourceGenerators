@@ -10,7 +10,7 @@ using DtoGenerator.Domain;
 
 namespace DtoGenerator
 {
-    public static class PersonExtensions
+    public static partial class PersonExtensions
     {
         public static DtoGenerator.Domain.Person ToDto(this Person poco)
         {
@@ -19,6 +19,7 @@ namespace DtoGenerator
             dto.FirstName = poco.FirstName;
             dto.LastName = poco.LastName;
             dto.Date = poco.Date;
+            dto.RelatedPerson = poco.RelatedPerson;
             dto.PeopleICollection = poco.PeopleICollection;
             dto.PeopleCollection = poco.PeopleCollection;
             dto.PeopleIList = poco.PeopleIList;
@@ -35,6 +36,7 @@ namespace DtoGenerator
             poco.FirstName = dto.FirstName;
             poco.LastName = dto.LastName;
             poco.Date = dto.Date;
+            poco.RelatedPerson = dto.RelatedPerson;
             poco.PeopleICollection = dto.PeopleICollection;
             poco.PeopleCollection = dto.PeopleCollection;
             poco.PeopleIList = dto.PeopleIList;
@@ -51,6 +53,7 @@ namespace DtoGenerator
             poco.FirstName = dto.FirstName;
             poco.LastName = dto.LastName;
             poco.Date = dto.Date;
+            poco.RelatedPerson = dto.RelatedPerson;
             poco.PeopleICollection = dto.PeopleICollection;
             poco.PeopleCollection = dto.PeopleCollection;
             poco.PeopleIList = dto.PeopleIList;
@@ -67,6 +70,7 @@ namespace DtoGenerator
             dto.FirstName = poco.FirstName;
             dto.LastName = poco.LastName;
             dto.Date = poco.Date;
+            dto.RelatedPerson = poco.RelatedPerson;
             dto.PeopleICollection = poco.PeopleICollection;
             dto.PeopleCollection = poco.PeopleCollection;
             dto.PeopleIList = poco.PeopleIList;

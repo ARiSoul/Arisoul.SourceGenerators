@@ -11,17 +11,18 @@ using System.Collections.ObjectModel;
 
 namespace DtoGenerator.Domain
 {
-    public class Person
+    public partial class Person
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime Date { get; set; }
-        public ICollection<DtoGenerator.Person> PeopleICollection { get; set; }
-        public Collection<DtoGenerator.Person> PeopleCollection { get; set; }
-        public IList<DtoGenerator.Person> PeopleIList { get; set; }
-        public List<DtoGenerator.Person> PeopleList { get; set; }
-        public Dictionary<System.String, DtoGenerator.Person> PeopleDictionary { get; set; }
-        public IDictionary<System.String, DtoGenerator.Person> PeopleIDictionary { get; set; }
-        public PersonEnum PersonEnum { get; set; }
+        public virtual string FirstName { get; set; }
+        public virtual string LastName { get; set; }
+        public virtual global::System.DateTime Date { get; set; }
+        public virtual global::DtoGenerator.Person RelatedPerson { get; set; }
+        public virtual ICollection<DtoGenerator.Person> PeopleICollection { get; set; }
+        public virtual Collection<DtoGenerator.Person> PeopleCollection { get; set; }
+        public virtual IList<DtoGenerator.Person> PeopleIList { get; set; }
+        public virtual List<DtoGenerator.Person> PeopleList { get; set; }
+        public virtual Dictionary<System.String, DtoGenerator.Person> PeopleDictionary { get; set; }
+        public virtual IDictionary<System.String, DtoGenerator.Person> PeopleIDictionary { get; set; }
+        public virtual global::DtoGenerator.PersonEnum PersonEnum { get; set; }
     }
 }

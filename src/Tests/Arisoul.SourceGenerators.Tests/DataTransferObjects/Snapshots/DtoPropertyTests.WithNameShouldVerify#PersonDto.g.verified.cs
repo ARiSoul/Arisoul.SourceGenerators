@@ -12,9 +12,9 @@ using System.Collections.ObjectModel;
 
 namespace GeneratorDebugConsumer
 {
-    public class PersonDto
+    public partial class PersonDto
     {
-        public string TheName { get; set; }
-        public string Description { get; set; }
+        public virtual string TheName { get; set; }
+        public virtual string Description { get; set; }
     }
 }
