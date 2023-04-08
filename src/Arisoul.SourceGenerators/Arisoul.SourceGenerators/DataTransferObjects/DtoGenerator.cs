@@ -1,4 +1,5 @@
 ﻿using Arisoul.SourceGenerators.Diagnostics.DataTransferObjects;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Immutable;
 
@@ -367,35 +368,47 @@ public class DtoGenerator : IIncrementalGenerator
                 }
             }
 
-            // this is the attribute, go on
+            // this is a valid attribute, go on
             string? dtoPropertyName = GetPropertyNameFromDtoAttribute(attribute);
             if (string.IsNullOrWhiteSpace(dtoPropertyName))
                 dtoPropertyName = propertySymbol.Name;
 
-            var collectionTypeArguments = new List<CollectionTypeArgument>();
-            var typeSymbol = semanticModel.GetTypeInfo(((PropertyDeclarationSyntax)propertySymbol.DeclaringSyntaxReferences[0].GetSyntax()).Type).Type;
-
-            // Manage collections, so the argument types belong to the correct namespace and don't conflict in Extensions class
-            if (typeSymbol.IsCollection(semanticModel) && propertySymbol.Type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType)
-                // if is a dictionary, for example, will have more that one type argument
-                foreach (var argument in namedTypeSymbol.TypeArguments)
-                    collectionTypeArguments.Add(new()
-                    {
-                        CollectionName = propertySymbol.Type.Name,
-                        SourceNamespace = argument.ContainingNamespace.ToString(),
-                        Name = argument.Name,
-                    });
-
             var sourceType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var targetType = sourceType;
             bool isChildProperty = false;
+            var collectionTypeArguments = new List<CollectionTypeArgument>();
 
             // in case is the TargetDtoProperty, the target type must be the one received in generic
             if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))
             {
-                var target = attribute.AttributeClass.TypeArguments[0];
+                ITypeSymbol target = attribute.AttributeClass.TypeArguments[0];
                 targetType = target.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 isChildProperty = true;
+
+                // Manage collections, so the argument types belong to the correct namespace and don't conflict in Extensions class
+                if (target.IsCollection(semanticModel) && target is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType)
+                    // loop through type arguments, because if is a dictionary, for example, will have more that one
+                    foreach (var argument in ((INamedTypeSymbol)target).TypeArguments)
+                        collectionTypeArguments.Add(new()
+                        {
+                            CollectionName = target.Name,
+                            SourceNamespace = argument.ContainingNamespace.IsGlobalNamespace ? string.Empty : argument.ContainingNamespace.ToString(),
+                            Name = argument.Name,
+                        });
+            }
+            else
+            {
+                ITypeSymbol typeSymbol = semanticModel.GetTypeInfo(((PropertyDeclarationSyntax)propertySymbol.DeclaringSyntaxReferences[0].GetSyntax()).Type).Type!;
+                // Manage collections, so the argument types belong to the correct namespace and don't conflict in Extensions class
+                if (typeSymbol.IsCollection(semanticModel) && propertySymbol.Type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType)
+                    // loop through type arguments, because if is a dictionary, for example, will have more that one
+                    foreach (var argument in namedTypeSymbol.TypeArguments)
+                        collectionTypeArguments.Add(new()
+                        {
+                            CollectionName = propertySymbol.Type.Name,
+                            SourceNamespace = argument.ContainingNamespace.ToString(),
+                            Name = argument.Name,
+                        });
             }
 
             var propInfo = new DtoGeneratorPropertyInfo(
