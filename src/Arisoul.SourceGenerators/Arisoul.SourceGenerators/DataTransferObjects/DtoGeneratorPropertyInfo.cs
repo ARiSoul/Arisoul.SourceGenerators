@@ -32,5 +32,5 @@ public class CollectionTypeArgument
     public string SourceNamespace { get; set; }
     public string Name { get; set; }
 
-    public override string ToString() => string.Concat(SourceNamespace, ".", Name);
+    public override string ToString() => string.Concat(SourceNamespace, string.IsNullOrWhiteSpace(SourceNamespace) ? string.Empty : ".", Name);
 }

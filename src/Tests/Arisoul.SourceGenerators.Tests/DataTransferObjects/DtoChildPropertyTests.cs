@@ -131,4 +131,36 @@ namespace GeneratorDebugConsumer
 
         return TestHelper.Verify<DtoGenerator>(code, SnapshotsDirectory);
     }
+
+    [Fact]
+    public Task ChildCollectionsShouldGenerateWithExpectedType()
+    {
+        var code = @"
+using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoExtensionsClassGeneration(GenerationBehavior = GenerationBehavior.NoGeneration)]
+public class Detail
+{
+    [DtoProperty] public int ID { get; set; }
+    [DtoProperty] public int HeaderID { get; set; }
+}
+
+using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+[DtoExtensionsClassGeneration(GenerationBehavior = GenerationBehavior.NoGeneration)]
+public class Header
+{
+    [DtoProperty]
+    public int ID { get; set; }
+
+    [DtoChildProperty<HashSet<DetailDto>>]
+    public ICollection<Detail> Details { get; set; }
+}}";
+
+        return TestHelper.Verify<DtoGenerator>(code, SnapshotsDirectory);
+    }
 }
