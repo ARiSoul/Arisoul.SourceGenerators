@@ -5,10 +5,31 @@
 Here you can find the release notes of each version of the project from more recent to older ones. 
 
 ## Table of versions
+- [v1.0.3 (09/04/2023)](#v1.0.3)
 - [v1.0.2 (08/04/2023)](#v1.0.2)
 - [v1.0.1 (03/04/2023)](#v1.0.1)
 - [v1.0.0 (29/03/2023)](#v1.0.0)
 
+# v1.0.3 <a id="v1.0.3"></a>
+
+**Release date** - 09/04/2023
+
+**Hotfix**
+
+## Bugs
+- #13 DtoChildProperty with Collections is not working as expected
+    - Fixed
+
+## Test coverage
+- All changes were covered by unit tests
+- Number of tests: **40 tests**
+- Coverage: **97.9%**
+
+<br/>
+
+[Release link](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.3)
+
+<p align="right">(<a href="#changelog-top">back to top</a>)</p>
 
 # v1.0.2 <a id="v1.0.2"></a>
 
