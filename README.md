@@ -105,7 +105,7 @@ You can check some simple examples [here](#simple-examples). Also, check the [re
 ## Tests Coverage
 - Arisoul SourceGenerator is unit tested with <a href="https://xunit.net/">**xUnit**</a> and <a href="https://github.com/VerifyTests/Verify">**Verify**</a>
 - To report the Visual Studio extension <a href="https://github.com/FortuneN/FineCodeCoverage">**Fine Code Coverage**</a> is used
-- 39 tests at the moment with a coverage more than ***95%*** as you can see below
+- 40 tests at the moment with a coverage more than ***97%*** as you can see below
 
 <img src="img/test_coverage.png" alt="Tests Coverage"/>
 
@@ -422,6 +422,7 @@ _Read the [release notes](#release-notes) form more information. If you need mor
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Release Notes
+- [v1.0.3 (09/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v103)
 - [v1.0.2 (08/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v102)
 - [v1.0.1 (03/04/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v101)
 - [v1.0.0 (29/03/2023)](https://github.com/ARiSoul/Arisoul.SourceGenerators/blob/master/CHANGELOG.md#v100)
