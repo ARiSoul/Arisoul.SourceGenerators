@@ -126,17 +126,17 @@ Choose how to install the package:
 
 * .NET CLI
   ```sh
-  dotnet add package Arisoul.SourceGenerators --version 1.0.1
+  dotnet add package Arisoul.SourceGenerators --version 1.0.3
   ```
 
 * Package Manager
   ```sh
-  NuGet\Install-Package Arisoul.SourceGenerators -Version 1.0.1
+  NuGet\Install-Package Arisoul.SourceGenerators -Version 1.0.3
   ```
 
 * Directly in your .csproj
   ```sh
-  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.1" />
+  <PackageReference Include="Arisoul.SourceGenerators" Version="1.0.3" />
   ```
 
 * Or in Visual Studio, use the **Manage NuGet Packages...** option and search for **Arisoul** with the **Package Source** option as '**nuget.org**' or '**All**'
