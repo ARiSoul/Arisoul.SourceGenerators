@@ -20,7 +20,7 @@ In this first version, only single entities are considered in mapping extensions
 		<PackageOutputPath>$(OutputPath)</PackageOutputPath>
 		<IncludeSymbols>False</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<PackageVersion>1.0.3</PackageVersion>
+		<PackageVersion>1.0.4</PackageVersion>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 

@@ -5,10 +5,35 @@
 Here you can find the release notes of each version of the project from more recent to older ones. 
 
 ## Table of versions
+- [v1.0.4 (29/03/2023)](#v1.0.4)
 - [v1.0.3 (09/04/2023)](#v1.0.3)
 - [v1.0.2 (08/04/2023)](#v1.0.2)
 - [v1.0.1 (03/04/2023)](#v1.0.1)
 - [v1.0.0 (29/03/2023)](#v1.0.0)
+
+# v1.0.4 <a id="v1.0.4"></a>
+
+**Release date** - 12/04/2023
+
+## Features
+
+- No new features
+
+## Bugs
+- #16 - Analyzers are detecting readonly properties as error with any attribute
+    - Fixed
+
+## Test coverage
+- Added 2 more tests to cover this situation
+- Number of tests: **42 tests**
+- Coverage: **97.9%**
+
+<br/>
+
+[Release link](https://github.com/ARiSoul/Arisoul.SourceGenerators/releases/tag/v1.0.4)
+
+<p align="right">(<a href="#changelog-top">back to top</a>)</p>
+
 
 # v1.0.3 <a id="v1.0.3"></a>
 
