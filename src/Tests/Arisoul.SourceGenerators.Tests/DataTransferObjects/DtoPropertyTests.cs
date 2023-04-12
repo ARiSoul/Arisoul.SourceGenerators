@@ -121,6 +121,49 @@ public class Person
     }
 
     [Fact]
+    public Task ReadonlyPropertyWithoutAttributeMustVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+public class Person
+{
+    public int Id { get; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code, SnapshotsDirectory);
+    }
+
+    [Fact]
+    public Task ReadonlyPropertyWithOtherAttributeMustVerify()
+    {
+        var code = @"using Arisoul.SourceGenerators.DataTransferObjects;
+
+namespace DtoGenerator;
+
+public class Person
+{
+    [Required]
+    public int Id { get; }
+
+    [DtoProperty(""TestAgain"")]
+    public string FirstName { get; set; }
+
+    [DtoProperty]
+    public string LastName { get; set; }
+}";
+
+        return TestHelper.Verify<DtoGenerator>(code, SnapshotsDirectory);
+    }
+
+    [Fact]
     public Task AbstractClassShouldNotBeGenerated()
     {
         var code = @"using Arisoul.SourceGenerators.DataTransferObjects;

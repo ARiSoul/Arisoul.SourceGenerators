@@ -204,14 +204,7 @@ public class DtoGenerator : IIncrementalGenerator
             if (semanticModel == null || semanticModel.GetDeclaredSymbol(member) is not IPropertySymbol propertySymbol)
                 continue;
 
-            // the property cannot be readonly
-            if (propertySymbol.IsReadOnly)
-            {
-                context.ReportDiagnostic(DTODiagnostics.ReadonlyPropertyDiagnostic(propertySymbol, member));
-                continue;
-            }
-
-            if (!SetPropertyNameAndPopulatePropsToGenerate(propsToGenerate, propertySymbol, context, classDeclaration, compilation))
+            if (!SetPropertyNameAndPopulatePropsToGenerate(propsToGenerate, propertySymbol, context, classDeclaration, compilation, member))
                 return false;
         }
 
@@ -323,7 +316,7 @@ public class DtoGenerator : IIncrementalGenerator
         return dtoGeneratorClassInfo;
     }
 
-    private static bool SetPropertyNameAndPopulatePropsToGenerate(List<DtoGeneratorPropertyInfo> propsToGenerate, IPropertySymbol propertySymbol, SourceProductionContext context, ClassDeclarationSyntax classSyntax, Compilation compilation)
+    private static bool SetPropertyNameAndPopulatePropsToGenerate(List<DtoGeneratorPropertyInfo> propsToGenerate, IPropertySymbol propertySymbol, SourceProductionContext context, ClassDeclarationSyntax classSyntax, Compilation compilation, MemberDeclarationSyntax propertySyntax)
     {
         var semanticModel = compilation.GetSemanticModel(classSyntax.SyntaxTree);
         var classSymbol = semanticModel.GetDeclaredSymbol(classSyntax);
@@ -331,11 +324,18 @@ public class DtoGenerator : IIncrementalGenerator
         // loop through attributes and find the required attribute
         foreach (var attribute in propertySymbol.GetAttributes())
         {
-            // is this the attribute?
+            // is this an expected attribute?
             if (attribute.AttributeClass == null
                 || (!FullyQualifiedDtoPropertyMarkerName.Contains(attribute.AttributeClass.Name)
                 && !FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name)))
                 continue;
+
+            // the property cannot be readonly
+            if (propertySymbol.IsReadOnly)
+            {
+                context.ReportDiagnostic(DTODiagnostics.ReadonlyPropertyDiagnostic(propertySymbol, propertySyntax));
+                continue;
+            }
 
             // if this is a child property and ExtensionsClass.GenerationBehavior != None, diagnose unsupported generation of extensions class with property childs
             if (FullyQualifiedDtoChildPropertyMarkerName.Contains(attribute.AttributeClass.Name))

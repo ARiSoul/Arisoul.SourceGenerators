@@ -1,5 +1,6 @@
 ﻿using Arisoul.SourceGenerators.DataTransferObjects;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace DtoGenerator;
