@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace Arisoul.SourceGenerators.DataTransferObjects.Tests;
 
 [UsesVerify]
-public class DtoPropertyTests : BaseDtoTestClass
+public class GridViewModelTests : BaseDtoTestClass
 {
     [Fact]
     public Task WithNoNameShouldVerify()
